@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpPascal", "SharpPascal\SharpPascal.csproj", "{AD597A58-2992-4928-A7D5-2EC82C60D88E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpPascal", "SharpPascal\SharpPascal.csproj", "{AD597A58-2992-4928-A7D5-2EC82C60D88E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

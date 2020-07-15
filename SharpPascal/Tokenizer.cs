@@ -25,6 +25,7 @@ namespace SharpPascal
 
     using SharpPascal.Tokens;
 
+
     /// <summary>
     /// Makes tokens from a program source.
     /// </summary>
@@ -33,15 +34,13 @@ namespace SharpPascal
         /// <summary>
         /// The end of the source character.
         /// </summary>
-        public const char C_EOF = (char)0;
+        public const char C_EOF = Char.MinValue;
 
         /// <summary>
         /// The end of the line character.
         /// </summary>
         public const char C_EOLN = '\n';
-
-
-        private string _source;
+               
 
         /// <summary>
         /// The currentlly parsed source.
@@ -58,8 +57,15 @@ namespace SharpPascal
                 _source = value ?? string.Empty;
 
                 SourcePosition = -1;
+                NextChar();
             }
         }
+
+        /// <summary>
+        /// The last character extracted from the program source.
+        /// </summary>
+        public char CurrentChar { get; private set; }
+
 
         /// <summary>
         /// The current source position (from where was the last character).
@@ -70,8 +76,9 @@ namespace SharpPascal
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tokenizer()
+        public Tokenizer(string source = null)
         {
+            Source = source ?? string.Empty;
         }
 
 
@@ -80,45 +87,49 @@ namespace SharpPascal
         /// </summary>
         public IToken NextToken()
         {
-            if (SourcePosition >= Source.Length)
+            if (SourcePosition > Source.Length)
             {
                 throw new Exception("Read beyond the Source end");
             }
 
-            var c = NextChar();
-            while (c != C_EOF)
+            while (CurrentChar != C_EOF)
             {
                 // Skip white chars.
-                while (IsWhite(c))
+                while (IsWhite(CurrentChar))
                 {
-                    c = NextChar();
+                    NextChar();
                 }
 
-                if (IsLetter(c))
+                if (IsLetter(CurrentChar))
                 {
-                    return ParseIdent(c);
+                    return ParseIdent();
                 }
 
-                if (c == '\'')
+                if (CurrentChar == '\'')
                 {
                     return ParseString();
                 }
 
-                switch (c)
+                switch (CurrentChar)
                 {
-                    case ';': return new SimpleToken(TokenCode.TOK_SEP);
-                    case '(': return new SimpleToken(TokenCode.TOK_LBRA);
-                    case ')': return new SimpleToken(TokenCode.TOK_RBRA);
-                    case '.': return new SimpleToken(TokenCode.TOK_PROG_END);
+                    case ';': NextChar(); return new SimpleToken(TokenCode.TOK_SEP);
+                    case '(': NextChar(); return new SimpleToken(TokenCode.TOK_LBRA);
+                    case ')': NextChar(); return new SimpleToken(TokenCode.TOK_RBRA);
+                    case '.': NextChar(); return new SimpleToken(TokenCode.TOK_PROG_END);
 
                     default:
-                        throw new Exception($"Unknown character '{c}' found.");
+                        throw new Exception($"Unknown character '{CurrentChar}' found.");
                 }
             }
 
             return new SimpleToken(TokenCode.TOK_EOF);
         }
 
+
+        /// <summary>
+        /// The current program source.
+        /// </summary>
+        private string _source;
 
         /// <summary>
         /// The keyword - token map.
@@ -135,19 +146,17 @@ namespace SharpPascal
         /// Parses an identifier the ECMA-55 rules.
         /// </summary>
         /// <param name="c">The first character of the parsed identifier.</param>
-        private IToken ParseIdent(char c)
+        private IToken ParseIdent()
         {
-            var strValueSb = new StringBuilder(c.ToString());
+            var strValueSb = new StringBuilder(CurrentChar.ToString());
 
-            c = NextChar();
-            while (IsDigit(c) || IsLetter(c))
+            NextChar();
+            while (IsDigit(CurrentChar) || IsLetter(CurrentChar))
             {
-                strValueSb.Append(c);
+                strValueSb.Append(CurrentChar);
 
-                c = NextChar();
+                NextChar();
             }
-
-            PreviousChar();
 
             var strValue = strValueSb.ToString().ToUpperInvariant();
             if (_keyWordsMap.ContainsKey(strValue))
@@ -165,25 +174,23 @@ namespace SharpPascal
         /// </summary>
         private IToken ParseString()
         {
-            var strValue = string.Empty;
+            var strValueSb = new StringBuilder();
 
-            var c = NextChar();
-            while (c != C_EOF)
+            NextChar();
+            while (CurrentChar != C_EOF)
             {
-                if (c == '\'')
+                if (CurrentChar == '\'')
                 {
-                    c = NextChar();
+                    NextChar();
 
-                    if (c != '\'')
+                    if (CurrentChar != '\'')
                     {
-                        PreviousChar();
-
-                        return new StringToken(TokenCode.TOK_STR, strValue);
+                        return new StringToken(TokenCode.TOK_STR, strValueSb.ToString());
                     }
                 }
 
-                strValue += c;
-                c = NextChar();
+                strValueSb.Append(CurrentChar);
+                NextChar();
             }
 
             throw new Exception("Unexpected end of a string.");
@@ -194,20 +201,20 @@ namespace SharpPascal
         /// Gets the next character from the current program line source.
         /// </summary>
         /// <returns>The next character from the current program line source.</returns>
-        private char NextChar()
+        private void NextChar()
         {
             var p = SourcePosition + 1;
             if (p >= 0 && p < Source.Length)
             {
                 SourcePosition = p;
 
-                return Source[SourcePosition];
+                CurrentChar = Source[SourcePosition];
             }
             else
             {
                 SourcePosition = Source.Length;
 
-                return C_EOF;
+                CurrentChar = C_EOF;
             }
         }
 
@@ -215,42 +222,28 @@ namespace SharpPascal
         /// Gets the previous character from the current program line source.
         /// </summary>
         /// <returns>The previous character from the current program line source.</returns>
-        private char PreviousChar()
+        private void PreviousChar()
         {
             if (SourcePosition > 0 && SourcePosition <= Source.Length)
             {
                 SourcePosition--;
 
-                return Source[SourcePosition];
+                CurrentChar = Source[SourcePosition];
             }
             else if (SourcePosition > Source.Length)
             {
                 SourcePosition = Source.Length;
 
-                return C_EOF;
+                CurrentChar = C_EOF;
             }
             else
             {
                 SourcePosition = -1;
 
-                return C_EOF;
+                CurrentChar = C_EOF;
             }
         }
-
-        /// <summary>
-        /// Gets the previous character from the current program line source.
-        /// </summary>
-        /// <returns>The previous character from the current program line source.</returns>
-        private char PeekPreviousChar()
-        {
-            if (SourcePosition > 0 && SourcePosition <= Source.Length)
-            {
-                return Source[SourcePosition - 1];
-            }
-
-            return C_EOF;
-        }
-
+        
         /// <summary>
         /// Checks, if an character is a digit.
         /// </summary>
