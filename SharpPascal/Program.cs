@@ -21,8 +21,6 @@ freely, subject to the following restrictions:
 namespace SharpPascal
 {
     using System;
-
-    using SharpPascal.Tokens;
     
 
     static class Program
@@ -35,13 +33,9 @@ namespace SharpPascal
 
             tokenizer.Source = "program HelloWorld; begin writeln ('Hello, world!'); writeln end.";
 
-            var t = tokenizer.NextToken();
-            while (t.TokenCode != TokenCode.TOK_EOF)
-            {
-                Console.WriteLine("  > " + t.ToString());
+            var parser = new Parser(tokenizer);
 
-                t = tokenizer.NextToken();
-            }
+            parser.Parse();
 
             Console.WriteLine("DONE");
         }
