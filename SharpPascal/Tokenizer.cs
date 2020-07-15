@@ -23,6 +23,11 @@ namespace SharpPascal
     using System.Collections.Generic;
     using System.Text;
 
+    using SharpPascal.Tokens;
+
+    /// <summary>
+    /// Makes tokens from a program source.
+    /// </summary>
     public class Tokenizer
     {
         /// <summary>

@@ -17,13 +17,20 @@ freely, subject to the following restrictions:
  
  */
 
-namespace SharpPascal
+namespace SharpPascal.Tokens
 {
-    public class SimpleToken : AToken
+    public class IdentifierToken : AToken
     {
-        public SimpleToken(TokenCode tokenCode)
+        public IdentifierToken(string s)
         {
-            TokenCode = tokenCode;
+            TokenCode = TokenCode.TOK_IDENT;
+            StringValue = s ?? string.Empty;
+        }
+
+
+        public override string ToString()
+        {
+            return StringValue;
         }
     }
 }

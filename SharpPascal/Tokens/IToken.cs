@@ -17,7 +17,7 @@ freely, subject to the following restrictions:
  
  */
 
-namespace SharpPascal
+namespace SharpPascal.Tokens
 {
     public enum TokenCode
     {
