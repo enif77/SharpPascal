@@ -24,6 +24,7 @@ namespace SharpPascal
     using System.Collections.Generic;
     using System.Text;
 
+    using SharpPascal.CompiledProgramParts;
     using SharpPascal.Tokens;
 
 
@@ -40,15 +41,77 @@ namespace SharpPascal
         }
 
 
-        public void Parse()
+        public ICompiledProgramPart Parse()
+        {
+            //var t = Tokenizer.NextToken();
+            //while (t.TokenCode != TokenCode.TOK_EOF)
+            //{
+            //    Console.WriteLine("  > " + t.ToString());
+
+            //    t = Tokenizer.NextToken();
+            //}
+
+            return ParseProgram();
+        }
+
+
+        /// <summary>
+        /// program :: “program” identifier ‘;’ blok ‘.’ .
+        /// </summary>
+        /// <returns>A compiled program.</returns>
+        private ICompiledProgramPart ParseProgram()
         {
             var t = Tokenizer.NextToken();
-            while (t.TokenCode != TokenCode.TOK_EOF)
+            if (t.TokenCode != TokenCode.TOK_KEY_PROGRAM)
             {
-                Console.WriteLine("  > " + t.ToString());
-
-                t = Tokenizer.NextToken();
+                throw new CompilerException("The 'PROGRAM' key word expected.");
             }
+
+            t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_IDENT)
+            {
+                throw new CompilerException("A program name expected.");
+            }
+
+            var program = new CompiledProgramParts.Program(t.StringValue);
+
+            t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_SEP)
+            {
+                throw new CompilerException("The program name separator ';' expected.");
+            }
+
+            program.Block = ParseProgramBlock();
+
+            t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_PROG_END)
+            {
+                throw new CompilerException("The program end '.' expected.");
+            }
+
+            return program;
+        }
+
+        /// <summary>
+        /// blok :: “begin” [ command { ‘;’ command } ] “end” .
+        /// </summary>
+        /// <param name="program"></param>
+        /// <returns></returns>
+        private ICompiledProgramPart ParseProgramBlock()
+        {
+            var t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_KEY_BEGIN)
+            {
+                throw new CompilerException("The 'BEGIN' key word expected.");
+            }
+
+            t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_KEY_END)
+            {
+                throw new CompilerException("The 'END' key word expected.");
+            }
+
+            return new ProgramBlock();
         }
     }
 }

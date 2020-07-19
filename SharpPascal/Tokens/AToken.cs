@@ -51,7 +51,7 @@ namespace SharpPascal.Tokens
                 case TokenCode.TOK_EOLN: return "@EOLN";
             }
 
-            throw new InterpreterException("Unknown token " + TokenCode + ".");
+            throw new CompilerException("Unknown token " + TokenCode + ".");
         }
     }
 }

@@ -30,9 +30,14 @@ namespace SharpPascal
             Console.WriteLine("Sharp Pascal v1.0");
 
             var parser = new Parser(
-                new Tokenizer("program HelloWorld; begin writeln ('Hello, world!'); writeln end."));
+                //new Tokenizer("program HelloWorld; begin writeln ('Hello, world!'); writeln end."));
+                new Tokenizer("program HelloWorld; begin end."));
 
-            parser.Parse();
+            var p = parser.Parse();
+
+            Console.WriteLine();
+            Console.WriteLine(p.GenerateOutput());
+            Console.WriteLine();
 
             Console.WriteLine("DONE");
         }

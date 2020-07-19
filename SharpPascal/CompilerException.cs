@@ -25,17 +25,17 @@ namespace SharpPascal
     /// <summary>
     /// Represents and error, that occurred during the execution of a program.
     /// </summary>
-    public class InterpreterException : Exception
+    public class CompilerException : Exception
     {
-        public InterpreterException() : base()
+        public CompilerException() : base()
         {
         }
 
-        public InterpreterException(string message) : base(message)
+        public CompilerException(string message) : base(message)
         {
         }
 
-        public InterpreterException(string message, Exception innerException) : base(message, innerException)
+        public CompilerException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }
