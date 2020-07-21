@@ -26,44 +26,59 @@ namespace SharpPascal.CompiledProgramParts
     public class Program : ICompiledProgramPart
     {
         public string Name { get; }
+        public bool GenerateStdOutputCode { get; }
 
         public ICompiledProgramPart Block { get; set; }
 
 
-        public Program(string name)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="name">A program name.</param>
+        /// <param name="generateStdOutputCode">If true, standard output code will be generated (writeln etc.)</param>
+        public Program(string name, bool generateStdOutputCode)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A program name expected.");
 
             Name = name;
+            GenerateStdOutputCode = generateStdOutputCode;
         }
 
 
         public string GenerateOutput()
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(_sourceTemplate);
 
-            sb.AppendLine("using System;");
-            sb.AppendLine();
-            sb.AppendLine("namespace HelloWorld");
-            sb.AppendLine("{");
-            sb.AppendLine("  class Program");
-            sb.AppendLine("  {");
-            sb.AppendLine("    static void Main(string[] args)");
-            sb.AppendLine("    {");
-
-            if (Block != null)
-            {
-                sb.Append(Block.GenerateOutput());
-            }
-
-            sb.AppendLine("    }");
-            sb.AppendLine("  }");
+            sb.Replace("${namespace-name}", Name);
+            sb.Replace("${program-body}", (Block == null) ? string.Empty : Block.GenerateOutput());
+            sb.Replace("${std-output-code}", GenerateStdOutputCode ? _stdOutputSourceTemplate : string.Empty);
 
             // TODO: Program methods.
 
-            sb.AppendLine("}");
-
             return sb.ToString();
         }
+
+
+        private static readonly string _sourceTemplate = @"using System;
+
+namespace ${namespace-name}
+{
+    static class Program
+    {
+        static void Main(string[] args)
+        {
+            ${program-body}
+        }
+
+        ${std-output-code}
+    }
+}";
+
+        private static readonly string _stdOutputSourceTemplate = @"private static _WriteLn(string text = null)
+        {
+            Console.WriteLine(text);
+        }
+";
+
     }
 }

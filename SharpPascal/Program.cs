@@ -21,7 +21,8 @@ freely, subject to the following restrictions:
 namespace SharpPascal
 {
     using System;
-    
+    using System.IO;
+
 
     static class Program
     {
@@ -29,9 +30,15 @@ namespace SharpPascal
         {
             Console.WriteLine("Sharp Pascal v1.0");
 
+            if (args.Length < 1)
+            {
+                Console.WriteLine("USAGE: ptocs.exe source.pas");
+
+                return;
+            }
+
             var parser = new Parser(
-                //new Tokenizer("program HelloWorld; begin writeln ('Hello, world!'); writeln end."));
-                new Tokenizer("program HelloWorld; begin end."));
+                new Tokenizer(File.ReadAllText(args[0])));
 
             var p = parser.Parse();
 
@@ -49,15 +56,17 @@ namespace SharpPascal
 SharpPascal
 ===========
 
-program :: “program” identifier ‘;’ blok ‘.’ .
-blok :: “begin” [ command { ‘;’ command } ] “end” .
+program :: "program" identifier [ external-file-descriptors-list ] ';' blok '.' .
+external-file-descriptors-list :: '(' "output" ')' .
+blok :: "begin" [ command { ';' command } ] "end" .
 command :: procedure-identifier list-of-parameters-writeln .
-procedure-identifier :: “writeln” .
-list-of-parameters-writeln :: [ ‘(’ parameter-write { ‘,’ parameter-write } ‘)’ ] .
+procedure-identifier :: "writeln" .
+list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .
 parameter-write :: string .
-string :: ‘’’ [ string-character | string-terminator-escape ] ‘’’ .
-string-terminator-escape :: “‘’” .
-string-character :: any-char-except ‘’’ .
+string :: string-terminator [ string-character | string-terminator-escape ] string-terminator .
+string-terminator :: ''';
+string-terminator-escape :: "''" .
+string-character :: any char except string-terminator .
 
 
 program HelloWorld; begin end.
@@ -83,7 +92,7 @@ namespace HelloWorld
         }
 
 
-	private static _WriteLn(string text = null)
+        private static _WriteLn(string text = null)
         {
             Console.WriteLine(text);
         }

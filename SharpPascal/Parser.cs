@@ -43,46 +43,56 @@ namespace SharpPascal
 
         public ICompiledProgramPart Parse()
         {
-            //var t = Tokenizer.NextToken();
-            //while (t.TokenCode != TokenCode.TOK_EOF)
-            //{
-            //    Console.WriteLine("  > " + t.ToString());
-
-            //    t = Tokenizer.NextToken();
-            //}
-
             return ParseProgram();
         }
 
 
         /// <summary>
-        /// program :: “program” identifier ‘;’ blok ‘.’ .
+        /// program :: "program" identifier [ external-file-descriptors-list ] ';' blok '.' .
         /// </summary>
         /// <returns>A compiled program.</returns>
         private ICompiledProgramPart ParseProgram()
         {
+            // program.
             var t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_KEY_PROGRAM)
             {
                 throw new CompilerException("The 'PROGRAM' key word expected.");
             }
 
+            // identifier.
             t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
                 throw new CompilerException("A program name expected.");
             }
 
-            var program = new CompiledProgramParts.Program(t.StringValue);
+            var programName = t.StringValue;
 
+            // Eat identifier.
             t = Tokenizer.NextToken();
+
+            var generateStdOutputCode = false;
+
+            // external-file-descriptors-list?
+            if (t.TokenCode == TokenCode.TOK_LBRA)
+            {
+                ParseExternalFileDescriptorsList(out generateStdOutputCode);
+
+                // Eat ')'.
+                t = Tokenizer.NextToken();
+            }
+            
+            // ';'.
             if (t.TokenCode != TokenCode.TOK_SEP)
             {
                 throw new CompilerException("The program name separator ';' expected.");
             }
 
+            var program = new CompiledProgramParts.Program(programName, generateStdOutputCode);
             program.Block = ParseProgramBlock();
 
+            // Eat "end".
             t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_PROG_END)
             {
@@ -93,7 +103,34 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// blok :: “begin” [ command { ‘;’ command } ] “end” .
+        /// external-file-descriptors-list :: '(' "output" ')' .
+        /// </summary>
+        private void ParseExternalFileDescriptorsList(out bool generateStdOutputCode)
+        {
+            var t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_IDENT)
+            {
+                throw new CompilerException("An external file descriptor name expected.");
+            }
+
+            if (t.StringValue == "OUTPUT")
+            {
+                generateStdOutputCode = true;
+            }
+            else
+            {
+                throw new CompilerException($"Unsupported external file descriptor name '{t.StringValue}' found.");
+            }
+
+            t = Tokenizer.NextToken();
+            if (t.TokenCode != TokenCode.TOK_RBRA)
+            {
+                throw new CompilerException("The end of external file descriptors list ')' expected.");
+            }
+        }
+
+        /// <summary>
+        /// blok :: "begin" [ command { ';' command } ] "end" .
         /// </summary>
         /// <param name="program"></param>
         /// <returns></returns>
