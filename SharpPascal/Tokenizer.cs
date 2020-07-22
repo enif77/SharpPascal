@@ -92,6 +92,8 @@ namespace SharpPascal
                 throw new Exception("Read beyond the Source end");
             }
 
+            var inComment = false;
+
             while (CurrentChar != C_EOF)
             {
                 // Skip white chars.
@@ -99,6 +101,28 @@ namespace SharpPascal
                 {
                     NextChar();
                 }
+
+                if (CurrentChar == '{')
+                {
+                    SkipComment();
+
+                    continue;
+                }
+
+                if (CurrentChar == '(')
+                {
+                    NextChar();
+
+                    if (CurrentChar == '*')
+                    {
+                        SkipComment();
+
+                        continue;
+                    }
+
+                    PreviousChar();
+                }
+
 
                 if (IsLetter(CurrentChar))
                 {
@@ -122,6 +146,11 @@ namespace SharpPascal
                 }
             }
 
+            if (inComment)
+            {
+                throw new Exception("An end of comment expected.");
+            }
+
             return new SimpleToken(TokenCode.TOK_EOF);
         }
 
@@ -141,6 +170,64 @@ namespace SharpPascal
             { "PROGRAM", TokenCode.TOK_KEY_PROGRAM },
         };
 
+
+        private void SkipComment()
+        {
+            // Eat '{' or '*';
+            NextChar();
+
+            var inComment = true;
+            while (CurrentChar != C_EOF)
+            {
+                // The '}' end of a comment?
+                if (CurrentChar == '}')
+                {
+                    inComment = false;
+
+                    NextChar();
+
+                    break;
+                }
+                else if (CurrentChar == '*')
+                {
+                    NextChar();
+
+                    // The "*)" end of a comment?
+                    if (CurrentChar == ')')
+                    {
+                        inComment = false;
+
+                        NextChar();
+
+                        break;
+                    }
+
+                    continue;
+                }
+                else if (CurrentChar == '{')
+                {
+                    throw new Exception("An end of a comment expected.");
+                }
+                else if (CurrentChar == '(')
+                {
+                    NextChar();
+
+                    if (CurrentChar == '*')
+                    {
+                        throw new Exception("An end of a comment expected.");
+                    }
+
+                    continue;
+                }
+
+                NextChar();
+            }
+
+            if (inComment)
+            {
+                throw new Exception("An end of a comment expected.");
+            }
+        }
 
         /// <summary>
         /// Parses an identifier the ECMA-55 rules.

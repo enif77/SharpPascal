@@ -67,6 +67,9 @@ string :: string-terminator [ string-character | string-terminator-escape ] stri
 string-terminator :: ''';
 string-terminator-escape :: "''" .
 string-character :: any char except string-terminator .
+comment :: comment-start { any char except comment-start or comment-end } comment-end .
+comment-start :: '{' | "(*" .
+comment-end :: '}' | "*)" .
 
 
 program HelloWorld; begin end.
