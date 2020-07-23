@@ -1,4 +1,7 @@
-﻿program HelloWorld;
+﻿{
+  A "Hello world!" program in Pascal.
+}
+program HelloWorld(output);
 begin
   writeln('Hello, world!');
 end.

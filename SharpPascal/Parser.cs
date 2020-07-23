@@ -90,7 +90,7 @@ namespace SharpPascal
             }
 
             var program = new CompiledProgramParts.Program(programName, generateStdOutputCode);
-            program.Block = ParseProgramBlock();
+            program.Block = ParseProgramBlock(program);
 
             // Eat "end".
             t = Tokenizer.NextToken();
@@ -134,7 +134,7 @@ namespace SharpPascal
         /// </summary>
         /// <param name="program"></param>
         /// <returns></returns>
-        private ICompiledProgramPart ParseProgramBlock()
+        private ICompiledProgramPart ParseProgramBlock(IParentBlock parentBlock)
         {
             var t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_KEY_BEGIN)
@@ -148,7 +148,7 @@ namespace SharpPascal
                 throw new CompilerException("The 'END' key word expected.");
             }
 
-            return new ProgramBlock();
+            return new ProgramBlock(parentBlock);
         }
     }
 }

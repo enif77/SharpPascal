@@ -23,10 +23,15 @@ namespace SharpPascal.CompiledProgramParts
     using System.Text;
 
 
-    public class Program : ICompiledProgramPart
+    public class Program : ICompiledProgramPart, IParentBlock
     {
         public string Name { get; }
         public bool GenerateStdOutputCode { get; }
+
+        /// <summary>
+        /// Program has no parent block.
+        /// </summary>
+        public IParentBlock ParentBlock => this;
 
         public ICompiledProgramPart Block { get; set; }
 

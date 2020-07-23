@@ -19,27 +19,8 @@ freely, subject to the following restrictions:
 
 namespace SharpPascal.CompiledProgramParts
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-
-    public class ProgramBlock : ICompiledProgramPart, IParentBlock
+    public interface IParentBlock
     {
-        public IParentBlock ParentBlock { get; }
-
-
-        public ProgramBlock(IParentBlock parentBlock)
-        {
-            if (parentBlock == null) throw new ArgumentNullException(nameof(parentBlock));
-
-            ParentBlock = parentBlock;
-        }
-
-
-        public string GenerateOutput()
-        {
-            return string.Empty;
-        }
+        IParentBlock ParentBlock { get; }
     }
 }
