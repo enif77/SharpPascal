@@ -19,8 +19,32 @@ freely, subject to the following restrictions:
 
 namespace SharpPascal.CompiledProgramParts
 {
-    public interface IParentBlock
+    using System;
+    using System.Collections.Generic;
+
+
+    public abstract class AProgramBlockBase : ICompiledProgramPart, IProgramBlock
     {
-        IParentBlock ParentBlock { get; }
+        public IProgramBlock Parent { get; protected set; }
+
+        public IEnumerable<ICompiledProgramPart> Children { get; protected set; }
+
+
+        protected AProgramBlockBase(IProgramBlock parentBlock)
+        {
+            Parent = parentBlock;
+            Children = new List<ICompiledProgramPart>();
+        }
+
+
+        public virtual void AddCompiledProgramPart(ICompiledProgramPart programPart)
+        {
+            if (programPart == null) throw new ArgumentNullException(nameof(programPart));
+
+            ((IList<ICompiledProgramPart>)Children).Add(programPart);
+        }
+
+
+        public abstract string GenerateOutput();
     }
 }

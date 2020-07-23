@@ -90,7 +90,7 @@ namespace SharpPascal
             }
 
             var program = new CompiledProgramParts.Program(programName, generateStdOutputCode);
-            program.Block = ParseProgramBlock(program);
+            program.Block = ParseProgramBlock(new ProgramBlock(null));
 
             // Eat "end".
             t = Tokenizer.NextToken();
@@ -132,9 +132,9 @@ namespace SharpPascal
         /// <summary>
         /// blok :: "begin" [ command { ';' command } ] "end" .
         /// </summary>
-        /// <param name="program"></param>
-        /// <returns></returns>
-        private ICompiledProgramPart ParseProgramBlock(IParentBlock parentBlock)
+        /// <param name="parentBlock">A parent program block.</param>
+        /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
+        private ICompiledProgramPart ParseProgramBlock(IProgramBlock parentBlock)
         {
             var t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_KEY_BEGIN)
@@ -142,13 +142,44 @@ namespace SharpPascal
                 throw new CompilerException("The 'BEGIN' key word expected.");
             }
 
+            var block = new ProgramBlock(parentBlock);
+
             t = Tokenizer.NextToken();
+            if (t.TokenCode == TokenCode.TOK_KEY_END)
+            {
+                return block;
+            }
+
+            while (t.TokenCode != TokenCode.TOK_EOF)
+            {
+                block.AddCompiledProgramPart(ParseCommand(block));
+
+                if (t.TokenCode == TokenCode.TOK_KEY_END)
+                {
+                    break;
+                }
+            }
+
             if (t.TokenCode != TokenCode.TOK_KEY_END)
             {
                 throw new CompilerException("The 'END' key word expected.");
             }
 
-            return new ProgramBlock(parentBlock);
+            return block;
+        }
+
+
+        /// <summary>
+        /// command :: procedure-identifier list-of-parameters-writeln .
+        /// procedure-identifier:: "writeln" .
+        /// list-of-parameters-writeln:: ['(' parameter - write { ',' parameter-write } ')' ] .
+        /// parameter-write:: string .
+        /// </summary>
+        /// <param name="parentBlock">A parent program block.</param>
+        /// <returns>An ICompiledProgramPart instance representing this compiled program part</returns>
+        private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock)
+        {
+            return null;
         }
     }
 }

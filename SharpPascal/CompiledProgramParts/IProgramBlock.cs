@@ -17,24 +17,24 @@ freely, subject to the following restrictions:
  
  */
 
+using System.Collections.Generic;
+
 namespace SharpPascal.CompiledProgramParts
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-
-    public class ProgramBlock : AProgramBlockBase
+    public interface IProgramBlock
     {
-        public ProgramBlock(IProgramBlock parentBlock)
-            : base(parentBlock)
-        {
-        }
+        /// <summary>
+        /// The parent compiled part of this program block.
+        /// </summary>
+        IProgramBlock Parent { get; }
+
+        IEnumerable<ICompiledProgramPart> Children { get; }
 
 
-        public override string GenerateOutput()
-        {
-            return string.Empty;
-        }
+        /// <summary>
+        /// Adds a compiled program part to this block.
+        /// </summary>
+        /// <param name="programPart">A program part to be added.</param>
+        void AddCompiledProgramPart(ICompiledProgramPart programPart);
     }
 }
