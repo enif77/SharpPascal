@@ -5,6 +5,6 @@
   at the beginning of the program.
 }
 program EmptyProg(output(* A comment between tokens. *));
-begin
-  (*** Here will be code! ***)
-end.
+begin;
+  (*** Here will be code! ***) ; ;;  
+;end.

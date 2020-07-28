@@ -147,12 +147,21 @@ namespace SharpPascal
             t = Tokenizer.NextToken();
             while (t.TokenCode != TokenCode.TOK_EOF)
             {
-                block.AddCompiledProgramPart(ParseCommand(block));
+                block.AddCompiledProgramPart(ParseCommand(block, t));
 
                 if (t.TokenCode == TokenCode.TOK_KEY_END)
                 {
                     break;
                 }
+
+                if (t.TokenCode == TokenCode.TOK_SEP)
+                {
+                    t = Tokenizer.NextToken();
+
+                    continue;
+                }
+
+                throw new CompilerException("The ';' command separator expected.");
             }
 
             if (t.TokenCode != TokenCode.TOK_KEY_END)
@@ -172,8 +181,14 @@ namespace SharpPascal
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
         /// <returns>An ICompiledProgramPart instance representing this compiled program part</returns>
-        private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock)
+        private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock, IToken currentToken)
         {
+            //// procedure-ident paramaters
+            //if (currentToken.TokenCode == TokenCode.TOK_IDENT)
+            //{ 
+                
+            //}
+
             return new ProgramBlock(parentBlock);
         }
     }
