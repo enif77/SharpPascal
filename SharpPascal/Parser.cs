@@ -145,11 +145,6 @@ namespace SharpPascal
             var block = new ProgramBlock(parentBlock);
 
             t = Tokenizer.NextToken();
-            if (t.TokenCode == TokenCode.TOK_KEY_END)
-            {
-                return block;
-            }
-
             while (t.TokenCode != TokenCode.TOK_EOF)
             {
                 block.AddCompiledProgramPart(ParseCommand(block));
@@ -179,7 +174,7 @@ namespace SharpPascal
         /// <returns>An ICompiledProgramPart instance representing this compiled program part</returns>
         private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock)
         {
-            return null;
+            return new ProgramBlock(parentBlock);
         }
     }
 }
