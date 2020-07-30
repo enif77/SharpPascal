@@ -174,7 +174,7 @@ namespace SharpPascal
 
 
         /// <summary>
-        /// command :: procedure-identifier list-of-parameters-writeln .
+        /// command :: empty-command | procedure-identifier list-of-parameters-writeln .
         /// procedure-identifier:: "writeln" .
         /// list-of-parameters-writeln:: ['(' parameter - write { ',' parameter-write } ')' ] .
         /// parameter-write:: string .
@@ -189,7 +189,7 @@ namespace SharpPascal
                 
             //}
 
-            return new ProgramBlock(parentBlock);
+            return new EmptyCommand();
         }
     }
 }
