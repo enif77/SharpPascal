@@ -19,8 +19,6 @@ freely, subject to the following restrictions:
 
 namespace SharpPascal.CompiledProgramParts
 {
-    using System;
-    using System.Collections.Generic;
     using System.Text;
 
 
@@ -34,7 +32,21 @@ namespace SharpPascal.CompiledProgramParts
 
         public override string GenerateOutput()
         {
-            return string.Empty;
+            var sb = new StringBuilder();
+
+            foreach (var child in Children)
+            {
+                // Do not add an empty output from a compiled program part.
+                var childOutput = child.GenerateOutput();
+                if (string.IsNullOrWhiteSpace(childOutput))
+                {
+                    continue;
+                }
+
+                sb.AppendLine(childOutput);
+            }
+
+            return sb.ToString();
         }
     }
 }

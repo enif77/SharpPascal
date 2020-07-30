@@ -149,6 +149,7 @@ namespace SharpPascal
             {
                 block.AddCompiledProgramPart(ParseCommand(block, t));
 
+                t = Tokenizer.CurrentToken;
                 if (t.TokenCode == TokenCode.TOK_KEY_END)
                 {
                     break;
@@ -183,13 +184,24 @@ namespace SharpPascal
         /// <returns>An ICompiledProgramPart instance representing this compiled program part</returns>
         private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock, IToken currentToken)
         {
-            //// procedure-ident paramaters
-            //if (currentToken.TokenCode == TokenCode.TOK_IDENT)
-            //{ 
-                
-            //}
+            // procedure-ident paramaters
+            if (currentToken.TokenCode == TokenCode.TOK_IDENT)
+            {
+                var procedureIdentifier = currentToken.StringValue.ToLowerInvariant();
+                if (procedureIdentifier == "writeln")
+                {
+                    // Eat "writeln".
+                    _ = Tokenizer.NextToken();
 
-            return new EmptyCommand();
+                    return new WritelnCommand(parentBlock);
+                }
+            }
+            else if (currentToken.TokenCode == TokenCode.TOK_SEP || currentToken.TokenCode == TokenCode.TOK_KEY_END)
+            {
+                return new EmptyCommand(parentBlock);
+            }
+
+            throw new CompilerException($"Unexpected token: {currentToken}");
         }
     }
 }

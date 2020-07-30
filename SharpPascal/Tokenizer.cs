@@ -57,6 +57,7 @@ namespace SharpPascal
                 _source = value ?? string.Empty;
 
                 SourcePosition = -1;
+                CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
                 NextChar();
             }
         }
@@ -65,6 +66,11 @@ namespace SharpPascal
         /// The last character extracted from the program source.
         /// </summary>
         public char CurrentChar { get; private set; }
+
+        /// <summary>
+        /// The last token extracted from the program source.
+        /// </summary>
+        public IToken CurrentToken { get; private set; }
 
 
         /// <summary>
@@ -79,6 +85,7 @@ namespace SharpPascal
         public Tokenizer(string source = null)
         {
             Source = source ?? string.Empty;
+            CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
         }
 
 
@@ -126,20 +133,20 @@ namespace SharpPascal
 
                 if (IsLetter(CurrentChar))
                 {
-                    return ParseIdent();
+                    return CurrentToken = ParseIdent();
                 }
 
                 if (CurrentChar == '\'')
                 {
-                    return ParseString();
+                    return CurrentToken = ParseString();
                 }
 
                 switch (CurrentChar)
                 {
-                    case ';': NextChar(); return new SimpleToken(TokenCode.TOK_SEP);
-                    case '(': NextChar(); return new SimpleToken(TokenCode.TOK_LBRA);
-                    case ')': NextChar(); return new SimpleToken(TokenCode.TOK_RBRA);
-                    case '.': NextChar(); return new SimpleToken(TokenCode.TOK_PROG_END);
+                    case ';': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SEP);
+                    case '(': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
+                    case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
+                    case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
 
                     default:
                         throw new Exception($"Unknown character '{CurrentChar}' found.");
@@ -151,7 +158,7 @@ namespace SharpPascal
                 throw new Exception("An end of comment expected.");
             }
 
-            return new SimpleToken(TokenCode.TOK_EOF);
+            return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
         }
 
 

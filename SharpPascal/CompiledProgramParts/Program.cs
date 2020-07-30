@@ -72,7 +72,7 @@ namespace ${namespace-name}
     }
 }";
 
-        private static readonly string _stdOutputSourceTemplate = @"private static _WriteLn(string text = null)
+        private static readonly string _stdOutputSourceTemplate = @"private static _WriteLn(string text = string.Empty)
         {
             Console.WriteLine(text);
         }

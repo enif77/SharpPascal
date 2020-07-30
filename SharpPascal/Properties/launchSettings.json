@@ -2,7 +2,7 @@
   "profiles": {
     "SharpPascal": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\..\\Resources\\EmptyProg.pas"
+      "commandLineArgs": "..\\..\\..\\Resources\\HelloWorld.pas"
     }
   }
 }

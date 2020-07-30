@@ -3,5 +3,5 @@
 }
 program HelloWorld(output);
 begin
-  writeln('Hello, world!');
+  writeln { ('Hello, world!') }
 end.

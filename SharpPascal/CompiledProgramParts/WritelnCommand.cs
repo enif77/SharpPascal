@@ -23,9 +23,9 @@ namespace SharpPascal.CompiledProgramParts
 
 
     /// <summary>
-    /// An empty command.
+    /// The writeln command.
     /// </summary>
-    public class EmptyCommand : ICommand
+    public class WritelnCommand : ICommand
     {
         /// <summary>
         /// The parent program block of this command.
@@ -37,7 +37,7 @@ namespace SharpPascal.CompiledProgramParts
         /// Constructor.
         /// </summary>
         /// <param name="parentBlock">The parent program block of this command.</param>
-        public EmptyCommand(IProgramBlock parentBlock)
+        public WritelnCommand(IProgramBlock parentBlock)
         {
             if (parentBlock == null) throw new ArgumentNullException(nameof(parentBlock));
 
@@ -47,7 +47,7 @@ namespace SharpPascal.CompiledProgramParts
 
         public string GenerateOutput()
         {
-            return string.Empty;
+            return "_Writeln();";
         }
     }
 }
