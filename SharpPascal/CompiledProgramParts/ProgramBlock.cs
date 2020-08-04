@@ -34,6 +34,7 @@ namespace SharpPascal.CompiledProgramParts
         {
             var sb = new StringBuilder();
 
+            var firstLine = true;
             foreach (var child in Children)
             {
                 // Do not add an empty output from a compiled program part.
@@ -43,6 +44,15 @@ namespace SharpPascal.CompiledProgramParts
                     continue;
                 }
 
+                if (firstLine)
+                {
+                    firstLine = false;
+                }
+                else
+                {
+                    sb.Append("            ");
+                }
+                
                 sb.AppendLine(childOutput);
             }
 

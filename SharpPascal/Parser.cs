@@ -191,7 +191,34 @@ namespace SharpPascal
                 if (procedureIdentifier == "writeln")
                 {
                     // Eat "writeln".
-                    _ = Tokenizer.NextToken();
+                    var t = Tokenizer.NextToken();
+                    if (t.TokenCode == TokenCode.TOK_LBRA)
+                    {
+                        // Eat "(";
+                        t = Tokenizer.NextToken();
+                        if (t.TokenCode == TokenCode.TOK_STR)
+                        {
+                            var str = t.StringValue;
+
+                            // Eat string.
+                            t = Tokenizer.NextToken();
+                            if (t.TokenCode == TokenCode.TOK_RBRA)
+                            {
+                                // Eat ")".
+                                _ = Tokenizer.NextToken();
+
+                                return new WritelnCommand(parentBlock, str);
+                            }
+                            else
+                            {
+                                throw new CompilerException("The end of formal parameters (')') expected.");
+                            }
+                        }
+                        else
+                        {
+                            throw new CompilerException("A writeln parameter expected.");
+                        }
+                    }                 
 
                     return new WritelnCommand(parentBlock);
                 }
