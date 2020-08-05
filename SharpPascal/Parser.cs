@@ -222,6 +222,8 @@ namespace SharpPascal
 
                     return new WritelnCommand(parentBlock);
                 }
+
+                throw new CompilerException($"Undefined identifier: {currentToken.StringValue}");
             }
             else if (currentToken.TokenCode == TokenCode.TOK_SEP || currentToken.TokenCode == TokenCode.TOK_KEY_END)
             {
