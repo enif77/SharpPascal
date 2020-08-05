@@ -167,7 +167,7 @@ namespace SharpPascal
 
             if (t.TokenCode != TokenCode.TOK_KEY_END)
             {
-                throw new CompilerException("The 'END' key word expected.");
+                throw new CompilerException("The end of program block expected.");
             }
 
             return block;
@@ -194,30 +194,7 @@ namespace SharpPascal
                     var t = Tokenizer.NextToken();
                     if (t.TokenCode == TokenCode.TOK_LBRA)
                     {
-                        // Eat "(";
-                        t = Tokenizer.NextToken();
-                        if (t.TokenCode == TokenCode.TOK_STR)
-                        {
-                            var str = t.StringValue;
-
-                            // Eat string.
-                            t = Tokenizer.NextToken();
-                            if (t.TokenCode == TokenCode.TOK_RBRA)
-                            {
-                                // Eat ")".
-                                _ = Tokenizer.NextToken();
-
-                                return new WritelnCommand(parentBlock, str);
-                            }
-                            else
-                            {
-                                throw new CompilerException("The end of formal parameters (')') expected.");
-                            }
-                        }
-                        else
-                        {
-                            throw new CompilerException("A writeln parameter expected.");
-                        }
+                        return ParseWriteLnParams(parentBlock);
                     }                 
 
                     return new WritelnCommand(parentBlock);
@@ -232,5 +209,36 @@ namespace SharpPascal
 
             throw new CompilerException($"Unexpected token: {currentToken}");
         }
+
+        /// <summary>
+        /// list-of-parameters-write:: [ '(' parameter-write ')' ] .
+        /// parameter-write:: string .
+        /// </summary>
+        /// <param name="parentBlock">A parent program block.</param>
+        /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
+        private ICompiledProgramPart ParseWriteLnParams(IProgramBlock parentBlock)
+        {
+            // Eat "(";
+            var t = Tokenizer.NextToken();
+            if (t.TokenCode == TokenCode.TOK_STR)
+            {
+                var str = t.StringValue;
+
+                // Eat string.
+                t = Tokenizer.NextToken();
+                if (t.TokenCode == TokenCode.TOK_RBRA)
+                {
+                    // Eat ")".
+                    _ = Tokenizer.NextToken();
+
+                    return new WritelnCommand(parentBlock, str);
+                }
+           
+                throw new CompilerException("The end of formal parameters (')') expected.");
+            }
+
+            throw new CompilerException("A formal parameter expected.");
+        }
+
     }
 }
