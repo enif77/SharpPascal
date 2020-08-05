@@ -177,11 +177,11 @@ namespace SharpPascal
         /// <summary>
         /// command :: empty-command | procedure-identifier list-of-parameters-writeln .
         /// procedure-identifier:: "writeln" .
-        /// list-of-parameters-writeln:: ['(' parameter - write { ',' parameter-write } ')' ] .
+        /// list-of-parameters-writeln:: [ '(' parameter-write ')' ] .
         /// parameter-write:: string .
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
-        /// <returns>An ICompiledProgramPart instance representing this compiled program part</returns>
+        /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
         private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock, IToken currentToken)
         {
             // procedure-ident paramaters
