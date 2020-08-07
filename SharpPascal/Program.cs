@@ -42,9 +42,7 @@ namespace SharpPascal
 
             var p = parser.Parse();
 
-            Console.WriteLine();
-            Console.WriteLine(p.GenerateOutput());
-            Console.WriteLine();
+            File.WriteAllText(args[0] + ".cs", p.GenerateOutput());
 
             Console.WriteLine("DONE");
         }
