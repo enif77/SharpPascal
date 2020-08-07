@@ -6,4 +6,7 @@
     <AssemblyName>ptocs</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Resources/*.*" />
+  </ItemGroup>
 </Project>
