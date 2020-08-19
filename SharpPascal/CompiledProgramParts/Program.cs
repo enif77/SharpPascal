@@ -45,32 +45,24 @@ namespace SharpPascal.CompiledProgramParts
 
         public string GenerateOutput()
         {
-            var sb = new StringBuilder(_sourceTemplate);
+            var sb = new StringBuilder();
 
-            sb.Replace("${namespace-name}", Name);
-            sb.Replace("${program-body}", (Block == null) ? string.Empty : Block.GenerateOutput());
-            sb.Replace("${std-output-code}", GenerateStdOutputCode ? _stdOutputSourceTemplate : string.Empty);
+            sb.Append("namespace ");
+            sb.AppendLine(Name);
+            sb.AppendLine("{");
+            sb.AppendLine("static class Program");
+            sb.AppendLine("{");
+            sb.AppendLine((Block == null) ? string.Empty : Block.GenerateOutput());
 
             // TODO: Program methods.
+
+            sb.Append(GenerateStdOutputCode ? _stdOutputSourceTemplate : string.Empty);
+            sb.AppendLine("}");
+            sb.AppendLine("}");
 
             return sb.ToString();
         }
 
-
-        private static readonly string _sourceTemplate = @"using System;
-
-namespace ${namespace-name}
-{
-    static class Program
-    {
-        static void Main(string[] args)
-        {
-            ${program-body}
-        }
-
-        ${std-output-code}
-    }
-}";
 
         private static readonly string _stdOutputSourceTemplate = @"private static void _WriteLn(string text = """")
         {

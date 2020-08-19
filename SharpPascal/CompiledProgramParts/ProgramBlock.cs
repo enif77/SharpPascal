@@ -36,11 +36,17 @@ namespace SharpPascal.CompiledProgramParts
 
             foreach (var variableDeclaration in VariableDeclarations.Values)
             {
+                sb.Append("static ");
                 sb.Append(variableDeclaration.OutputTypeName);
                 sb.Append(" ");
                 sb.Append(variableDeclaration.Name);
                 sb.AppendLine(";");
             }
+
+            sb.AppendLine();
+
+            sb.AppendLine("static void Main(string[] args)");
+            sb.AppendLine("{");
 
             foreach (var child in Children)
             {
@@ -54,7 +60,20 @@ namespace SharpPascal.CompiledProgramParts
                 sb.AppendLine(childOutput);
             }
 
+            sb.AppendLine("}");
+
             return sb.ToString();
         }
     }
 }
+
+/*
+ 
+static int a;
+
+static void Main(string[] args)
+{
+    // Code...
+}
+ 
+ */
