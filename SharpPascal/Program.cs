@@ -56,7 +56,13 @@ SharpPascal
 
 program :: "program" identifier [ external-file-descriptors-list ] ';' blok '.' .
 external-file-descriptors-list :: '(' "output" ')' .
-blok :: "begin" [ command { ';' command } ] "end" .
+blok :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
+
+variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
+variable-declaration :: identifier-list ':' type-denoter .
+identifier-list :: identifier { ',' identifier } .
+type-denoter :: "integer" | "real" | "char" | "boolean" | "string" .
+
 command :: procedure-identifier list-of-parameters-writeln .
 procedure-identifier :: "writeln" .
 list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .

@@ -144,6 +144,8 @@ namespace SharpPascal
                 switch (CurrentChar)
                 {
                     case ';': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SEP);
+                    case ',': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LIST_SEP);
+                    case ':': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT);
                     case '(': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
                     case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
                     case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
@@ -175,6 +177,7 @@ namespace SharpPascal
             { "BEGIN", TokenCode.TOK_KEY_BEGIN },
             { "END", TokenCode.TOK_KEY_END },
             { "PROGRAM", TokenCode.TOK_KEY_PROGRAM },
+            { "VAR", TokenCode.TOK_KEY_VAR },
         };
 
 

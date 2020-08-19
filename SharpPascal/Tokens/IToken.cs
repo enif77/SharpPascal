@@ -24,41 +24,52 @@ namespace SharpPascal.Tokens
         /// <summary>
         /// The end of the file token.
         /// </summary>
-        TOK_EOF = 0,
+        TOK_EOF,
 
         /// <summary>
         /// The end of the line token.
         /// </summary>
-        TOK_EOLN = 1,
+        TOK_EOLN,
 
         /// <summary>
         /// The program end mark '.'.
         /// </summary>
-        TOK_PROG_END = 2,
+        TOK_PROG_END,
 
         /// <summary>
         /// The statement separator ';'.
         /// </summary>
-        TOK_SEP = 3,
+        TOK_SEP,
+
+        /// <summary>
+        /// The list separator ','.
+        /// </summary>
+        TOK_LIST_SEP,
+
+        /// <summary>
+        /// The ':'.
+        /// </summary>
+        TOK_DDOT,
 
         // '(' and ')'.
-        TOK_LBRA = 4,
-        TOK_RBRA = 5,
+        TOK_LBRA,
+        TOK_RBRA,
 
         /// <summary>
         /// A string literal.
         /// </summary>
-        TOK_STR = 10,
+        TOK_STR,
 
         /// <summary>
         /// An identifier.
         /// </summary>
-        TOK_IDENT = 11,
+        TOK_IDENT,
 
         // Keywords.
-        TOK_KEY_BEGIN = 100,
-        TOK_KEY_END = 101,
-        TOK_KEY_PROGRAM = 102,
+        TOK_KEY_BEGIN,
+        TOK_KEY_END,
+        TOK_KEY_PROGRAM,
+        TOK_KEY_VAR,
     };
 
 

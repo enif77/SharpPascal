@@ -34,7 +34,14 @@ namespace SharpPascal.CompiledProgramParts
         {
             var sb = new StringBuilder();
 
-            var firstLine = true;
+            foreach (var variableDeclaration in VariableDeclarations.Values)
+            {
+                sb.Append(variableDeclaration.OutputTypeName);
+                sb.Append(" ");
+                sb.Append(variableDeclaration.Name);
+                sb.AppendLine(";");
+            }
+
             foreach (var child in Children)
             {
                 // Do not add an empty output from a compiled program part.
@@ -42,15 +49,6 @@ namespace SharpPascal.CompiledProgramParts
                 if (string.IsNullOrWhiteSpace(childOutput))
                 {
                     continue;
-                }
-
-                if (firstLine)
-                {
-                    firstLine = false;
-                }
-                else
-                {
-                    sb.Append("            ");
                 }
                 
                 sb.AppendLine(childOutput);

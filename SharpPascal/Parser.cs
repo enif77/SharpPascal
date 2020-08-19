@@ -130,20 +130,25 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// blok :: "begin" [ command { ';' command } ] "end" .
+        /// blok :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
         /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
         private ICompiledProgramPart ParseProgramBlock(IProgramBlock parentBlock)
         {
+            var block = new ProgramBlock(parentBlock);
+
             var t = Tokenizer.NextToken();
+
+            // variable-declaration-part
+            ParseVariableDeclarationPart(block, t);
+
+            t = Tokenizer.CurrentToken;
             if (t.TokenCode != TokenCode.TOK_KEY_BEGIN)
             {
                 throw new CompilerException("The 'BEGIN' key word expected.");
             }
-
-            var block = new ProgramBlock(parentBlock);
-
+            
             t = Tokenizer.NextToken();
             while (t.TokenCode != TokenCode.TOK_EOF)
             {
@@ -173,6 +178,93 @@ namespace SharpPascal
             return block;
         }
 
+        /// <summary>
+        /// variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
+        /// variable-declaration :: identifier-list ':' type-denoter .
+        /// identifier-list :: identifier { ',' identifier } .
+        /// type-denoter :: "integer" | "real" | "char" | "boolean" | "string" .
+        /// </summary>
+        /// <param name="programBlock">A program block containing this variables declaration list.</param>
+        private void ParseVariableDeclarationPart(IProgramBlock programBlock, IToken currentToken)
+        {
+            if (currentToken.TokenCode != TokenCode.TOK_KEY_VAR)
+            {
+                return;
+            }
+
+            // Eat "var".
+            var t = Tokenizer.NextToken();
+
+
+            // TODO: Parse multiple variable-declarations.
+
+
+            if (t.TokenCode != TokenCode.TOK_IDENT)
+            {
+                throw new CompilerException("An identifier in the variable declaration list expected.");
+            }
+            
+            var variablesList = new List<string>();
+            while (t.TokenCode == TokenCode.TOK_IDENT)
+            {
+                variablesList.Add(t.StringValue);
+
+                // Eat the identifier.
+                t = Tokenizer.NextToken();
+
+                // ','.
+                if (t.TokenCode == TokenCode.TOK_LIST_SEP)
+                {
+                    // Eat the ','.
+                    t = Tokenizer.NextToken();
+
+                    if (t.TokenCode == TokenCode.TOK_IDENT)
+                    {
+                        continue;
+                    }
+
+                    throw new CompilerException("An identifier in the variable declaration list expected.");
+                }
+
+                // At the end of the variables list?
+                break;
+            }
+
+            // ':'?
+            if (t.TokenCode != TokenCode.TOK_DDOT)
+            {
+                throw new CompilerException("A variable type specification part expected.");
+            }
+
+            // Eat ':'.
+            t = Tokenizer.NextToken();
+
+            // A type identifier.
+            if (t.TokenCode != TokenCode.TOK_IDENT)
+            {
+                throw new CompilerException("A type denoter in variable declaration expected.");
+            }
+
+            var typeName = t.StringValue;
+
+            // Eat identifier.
+            t = Tokenizer.NextToken();
+
+            // ';' ?
+            if (t.TokenCode != TokenCode.TOK_SEP)
+            {
+                throw new CompilerException("The end of variable declaration list (';') expected.");
+            }
+
+            // Eat ';'.
+            Tokenizer.NextToken();
+
+            // Declare all found variables.
+            foreach (var variableName in variablesList)
+            {
+                programBlock.AddVariableDeclaration(variableName, typeName);
+            }
+        }
 
         /// <summary>
         /// command :: empty-command | procedure-identifier list-of-parameters-writeln .
