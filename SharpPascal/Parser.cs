@@ -193,17 +193,46 @@ namespace SharpPascal
             }
 
             // Eat "var".
-            var t = Tokenizer.NextToken();
+            Tokenizer.NextToken();
 
+            while (true)
+            {
+                ParseVariableDeclaration(programBlock);
 
-            // TODO: Parse multiple variable-declarations.
+                // Get the token behind the last variable-declaration.
+                var t = Tokenizer.CurrentToken;
 
+                // ';' ?
+                if (t.TokenCode != TokenCode.TOK_SEP)
+                {
+                    throw new CompilerException("The end of variable declaration list (';') expected.");
+                }
 
+                // Eat ';'.
+                t = Tokenizer.NextToken();
+
+                if (t.TokenCode != TokenCode.TOK_IDENT)
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// variable-declaration :: identifier-list ':' type-denoter .
+        /// identifier-list :: identifier { ',' identifier } .
+        /// type-denoter :: "integer" | "real" | "char" | "boolean" | "string" .
+        /// </summary>
+        /// <param name="programBlock"></param>
+        /// <param name="currentToken"></param>
+        private void ParseVariableDeclaration(IProgramBlock programBlock)
+        {
+            var t = Tokenizer.CurrentToken;
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
                 throw new CompilerException("An identifier in the variable declaration list expected.");
             }
-            
+
             var variablesList = new List<string>();
             while (t.TokenCode == TokenCode.TOK_IDENT)
             {
@@ -248,15 +277,6 @@ namespace SharpPascal
             var typeName = t.StringValue;
 
             // Eat identifier.
-            t = Tokenizer.NextToken();
-
-            // ';' ?
-            if (t.TokenCode != TokenCode.TOK_SEP)
-            {
-                throw new CompilerException("The end of variable declaration list (';') expected.");
-            }
-
-            // Eat ';'.
             Tokenizer.NextToken();
 
             // Declare all found variables.
