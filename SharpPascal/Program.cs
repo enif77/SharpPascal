@@ -54,14 +54,26 @@ namespace SharpPascal
 SharpPascal
 ===========
 
-program :: "program" identifier [ '(' program-parameter-list ')' ] ';' program-block '.' .
-program-parameter-list :: "output" .
+#program :: "program" identifier [ '(' program-parameter-list ')' ] ';' program-block '.' .
+#program-parameter-list :: "output" .
+
+program :: program-heading ';' program-block '.' .
+program-heading :: "program" identifier [ '(' program-parameter-list ')' ] .
+program-parameter-list :: identifier-list .
+identifier-list :: identifier { ',' identifier } .
 program-block :: block .
-block :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
+
+#block :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
+
+block :: variable-declaration-part statement-part .
 variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
 variable-declaration :: identifier-list ':' type-denoter .
-identifier-list :: identifier { ',' identifier } .
 type-denoter :: "integer" | "real" | "char" | "boolean" | "string" .
+statement-part :: compound-statement .
+compound-statement :: "begin" statement-sequence "end" .
+statement-sequence :: statement { ';' statement } .
+
+
 command :: procedure-identifier list-of-parameters-writeln .
 procedure-identifier :: "writeln" .
 list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .
