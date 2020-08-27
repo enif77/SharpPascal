@@ -22,7 +22,6 @@ namespace SharpPascal
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
 
     using SharpPascal.CompiledProgramParts;
     using SharpPascal.Tokens;
@@ -48,19 +47,56 @@ namespace SharpPascal
 
 
         /// <summary>
-        /// program :: "program" identifier [ external-file-descriptors-list ] ';' blok '.' .
+        /// program :: program-heading ';' program-block '.' EOF .
         /// </summary>
         /// <returns>A compiled program.</returns>
         private ICompiledProgramPart ParseProgram()
         {
-            // program.
+            var program = ParseProgramHeading();
+
+            // ';'.
+            var t = Tokenizer.CurrentToken;
+            if (t.TokenCode != TokenCode.TOK_SEP)
+            {
+                throw new CompilerException("The program name separator ';' expected.");
+            }
+
+            ((CompiledProgramParts.Program)program).Block = ParseProgramBlock(new ProgramBlock(null));
+
+            // '.'.
+            t = Tokenizer.CurrentToken;
+            if (t.TokenCode != TokenCode.TOK_PROG_END)
+            {
+                throw new CompilerException("The program end '.' expected.");
+            }
+
+            // Eat '.'.
+            t = Tokenizer.NextToken();
+
+            // EOF.
+            if (t.TokenCode != TokenCode.TOK_EOF)
+            {
+                throw new CompilerException("No more tokens expected.");
+            }
+
+            return program;
+        }
+
+        /// <summary>
+        /// program-heading :: "program" identifier [ '(' program-parameter-list ')' ] .
+        /// program-block :: block .
+        /// </summary>
+        /// <returns>A compiled program.</returns>
+        private ICompiledProgramPart ParseProgramHeading()
+        {
+            // "program".
             var t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_KEY_PROGRAM)
             {
                 throw new CompilerException("The 'PROGRAM' key word expected.");
             }
 
-            // identifier.
+            // An identifier.
             t = Tokenizer.NextToken();
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
@@ -69,64 +105,48 @@ namespace SharpPascal
 
             var programName = t.StringValue;
 
-            // Eat identifier.
+            // program-parameter-list?
             t = Tokenizer.NextToken();
-
-            var generateStdOutputCode = false;
-
-            // external-file-descriptors-list?
             if (t.TokenCode == TokenCode.TOK_LBRA)
             {
-                ParseExternalFileDescriptorsList(out generateStdOutputCode);
+                // Eat '('.
+                Tokenizer.NextToken();
+
+                ParseProgramParameterList();
 
                 // Eat ')'.
-                t = Tokenizer.NextToken();
-            }
-            
-            // ';'.
-            if (t.TokenCode != TokenCode.TOK_SEP)
-            {
-                throw new CompilerException("The program name separator ';' expected.");
-            }
+                t = Tokenizer.CurrentToken;
+                if (t.TokenCode != TokenCode.TOK_RBRA)
+                {
+                    throw new CompilerException("The end of program parameter list ')' expected.");
+                }
 
-            var program = new CompiledProgramParts.Program(programName, generateStdOutputCode);
-            program.Block = ParseProgramBlock(new ProgramBlock(null));
-
-            // Eat "end".
-            t = Tokenizer.NextToken();
-            if (t.TokenCode != TokenCode.TOK_PROG_END)
-            {
-                throw new CompilerException("The program end '.' expected.");
+                // Eat ')';
+                Tokenizer.NextToken();
             }
 
-            return program;
+            return new CompiledProgramParts.Program(programName);
         }
 
         /// <summary>
-        /// external-file-descriptors-list :: '(' "output" ')' .
+        /// program-parameter-list :: identifier-list .
+        /// identifier-list :: identifier { ',' identifier } .
         /// </summary>
-        private void ParseExternalFileDescriptorsList(out bool generateStdOutputCode)
+        private void ParseProgramParameterList()
         {
-            var t = Tokenizer.NextToken();
+            var t = Tokenizer.CurrentToken;
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
-                throw new CompilerException("An external file descriptor name expected.");
+                throw new CompilerException("An external file descriptor identifier expected.");
             }
 
-            if (t.StringValue == "OUTPUT")
-            {
-                generateStdOutputCode = true;
-            }
-            else
+            if (t.StringValue != "OUTPUT")
             {
                 throw new CompilerException($"Unsupported external file descriptor name '{t.StringValue}' found.");
             }
 
-            t = Tokenizer.NextToken();
-            if (t.TokenCode != TokenCode.TOK_RBRA)
-            {
-                throw new CompilerException("The end of external file descriptors list ')' expected.");
-            }
+            // Eat "OUTPUT".
+            Tokenizer.NextToken();
         }
 
         /// <summary>
@@ -174,6 +194,9 @@ namespace SharpPascal
             {
                 throw new CompilerException("The end of program block expected.");
             }
+
+            // Eat "end".
+            Tokenizer.NextToken();
 
             return block;
         }

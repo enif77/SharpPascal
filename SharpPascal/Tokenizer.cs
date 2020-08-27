@@ -149,6 +149,7 @@ namespace SharpPascal
                     case '(': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
                     case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
                     case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
+                    case '\0': return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
 
                     default:
                         throw new Exception($"Unknown character '{CurrentChar}' found.");

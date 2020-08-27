@@ -26,20 +26,17 @@ namespace SharpPascal.CompiledProgramParts
     public class Program : ICompiledProgramPart
     {
         public string Name { get; }
-        public bool GenerateStdOutputCode { get; }
         public ICompiledProgramPart Block { get; set; }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="name">A program name.</param>
-        /// <param name="generateStdOutputCode">If true, standard output code will be generated (writeln etc.)</param>
-        public Program(string name, bool generateStdOutputCode)
+        public Program(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A program name expected.");
 
             Name = name;
-            GenerateStdOutputCode = generateStdOutputCode;
         }
 
 
@@ -56,7 +53,7 @@ namespace SharpPascal.CompiledProgramParts
 
             // TODO: Program methods.
 
-            sb.Append(GenerateStdOutputCode ? _stdOutputSourceTemplate : string.Empty);
+            sb.Append(_stdOutputSourceTemplate);
             sb.AppendLine("}");
             sb.AppendLine("}");
 
