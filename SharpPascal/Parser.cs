@@ -52,33 +52,21 @@ namespace SharpPascal
         /// <returns>A compiled program.</returns>
         private ICompiledProgramPart ParseProgram()
         {
+            // Read the firs token.
+            Tokenizer.NextToken();
+
             var program = ParseProgramHeading();
 
-            // Expect ';'.
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_SEP)
-            {
-                throw new CompilerException("The program name separator ';' expected.");
-            }
-
-            // Eat ';'.
-            Tokenizer.NextToken();
+            // ';'.
+            ExpectAndEat(TokenCode.TOK_SEP, "The program name separator ';' expected.");
 
             ((CompiledProgramParts.Program)program).Block = ParseProgramBlock();
 
-            // Expect '.'.
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_PROG_END)
-            {
-                throw new CompilerException("The program end '.' expected.");
-            }
+            // '.'.
+            ExpectAndEat(TokenCode.TOK_PROG_END, "The program end '.' expected.");
 
-            // Eat '.'.
-            Tokenizer.NextToken();
-
-            // Expect EOF.
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_EOF)
-            {
-                throw new CompilerException("No more tokens expected.");
-            }
+            // EOF.
+            Expect(TokenCode.TOK_EOF, "No more tokens expected.");
 
             return program;
         }
@@ -90,24 +78,15 @@ namespace SharpPascal
         /// <returns>A compiled program.</returns>
         private ICompiledProgramPart ParseProgramHeading()
         {
-            // "program".
-            var t = Tokenizer.NextToken();
-            if (t.TokenCode != TokenCode.TOK_KEY_PROGRAM)
-            {
-                throw new CompilerException("The 'PROGRAM' key word expected.");
-            }
+            // "PROGRAM".
+            ExpectAndEat(TokenCode.TOK_KEY_PROGRAM, "The 'PROGRAM' key word expected.");
 
             // An identifier.
-            t = Tokenizer.NextToken();
-            if (t.TokenCode != TokenCode.TOK_IDENT)
-            {
-                throw new CompilerException("A program name expected.");
-            }
-
-            var programName = t.StringValue;
+            Expect(TokenCode.TOK_IDENT, "A program name expected.");
+            var programName = Tokenizer.CurrentToken.StringValue;
 
             // program-parameter-list?
-            t = Tokenizer.NextToken();
+            var t = Tokenizer.NextToken();
             if (t.TokenCode == TokenCode.TOK_LBRA)
             {
                 // Eat '('.
@@ -115,15 +94,8 @@ namespace SharpPascal
 
                 ParseProgramParameterList();
 
-                // Eat ')'.
-                t = Tokenizer.CurrentToken;
-                if (t.TokenCode != TokenCode.TOK_RBRA)
-                {
-                    throw new CompilerException("The end of program parameter list ')' expected.");
-                }
-
-                // Eat ')';
-                Tokenizer.NextToken();
+                // ')'.
+                ExpectAndEat(TokenCode.TOK_RBRA, "The end of program parameter list ')' expected.");
             }
 
             return new CompiledProgramParts.Program(programName);
@@ -135,15 +107,11 @@ namespace SharpPascal
         /// </summary>
         private void ParseProgramParameterList()
         {
-            var t = Tokenizer.CurrentToken;
-            if (t.TokenCode != TokenCode.TOK_IDENT)
-            {
-                throw new CompilerException("An external file descriptor identifier expected.");
-            }
+            Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
 
-            if (t.StringValue != "OUTPUT")
+            if (Tokenizer.CurrentToken.StringValue != "OUTPUT")
             {
-                throw new CompilerException($"Unsupported external file descriptor name '{t.StringValue}' found.");
+                throw new CompilerException($"Unsupported external file descriptor name '{Tokenizer.CurrentToken.StringValue}' found.");
             }
 
             // Eat "OUTPUT".
@@ -307,25 +275,13 @@ namespace SharpPascal
         /// <param name="currentBlock">The currently parsed program block.</param>
         private void ParseCompoundStatement(IProgramBlock currentBlock)
         {
-            // Expect "BEGIN".
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_BEGIN)
-            {
-                throw new CompilerException("The 'BEGIN' key word expected.");
-            }
-
-            // Eat "BEGIN".
-            Tokenizer.NextToken();
+            // "BEGIN".
+            ExpectAndEat(TokenCode.TOK_KEY_BEGIN, "The 'BEGIN' key word expected.");
 
             ParseStatementSequence(currentBlock);
 
-            // Expect "END".
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_END)
-            {
-                throw new CompilerException("The 'END' key word expected.");
-            }
-
-            // Eat "END".
-            Tokenizer.NextToken();
+            // "END".
+            ExpectAndEat(TokenCode.TOK_KEY_END, "The 'END' key word expected.");
         }
 
         /// <summary>
@@ -420,6 +376,41 @@ namespace SharpPascal
             }
 
             throw new CompilerException("A formal parameter expected.");
+        }
+
+
+        /// <summary>
+        /// Checks, if the last extracted token is the expected one.
+        /// Throws exception, if not.
+        /// </summary>
+        /// <param name="tokenCode">An expected token code.</param>
+        /// <param name="errorMessage">An error mesage thrown as an exception, if the expected token was not found.</param>
+        private void Expect(TokenCode tokenCode, string errorMessage)
+        {
+            if (Tokenizer.CurrentToken.TokenCode != tokenCode)
+            {
+                throw new CompilerException(errorMessage);
+            }
+        }
+
+        /// <summary>
+        /// Moves to the next token.
+        /// </summary>
+        private void Eat()
+        {
+            Tokenizer.NextToken();
+        }
+
+        /// <summary>
+        /// Checks, if the last extracted token is the expected one.
+        /// Throws an exception, if not, or moves to the next token, if it is.
+        /// </summary>
+        /// <param name="tokenCode">An expected token code.</param>
+        /// <param name="errorMessage">An error mesage thrown as an exception, if the expected token was not found.</param>
+        private void ExpectAndEat(TokenCode tokenCode, string errorMessage)
+        {
+            Expect(tokenCode, errorMessage);
+            Eat();
         }
 
     }
