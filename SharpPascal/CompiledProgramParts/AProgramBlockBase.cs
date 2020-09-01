@@ -23,7 +23,7 @@ namespace SharpPascal.CompiledProgramParts
     using System.Collections.Generic;
 
 
-    public abstract class AProgramBlockBase : ICompiledProgramPart, IProgramBlock
+    public abstract class AProgramBlockBase : IProgramBlock
     {
         public IProgramBlock Parent { get; protected set; }
         public Dictionary<string, VariableDeclaration> VariableDeclarations { get; }

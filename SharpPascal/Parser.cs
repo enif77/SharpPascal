@@ -54,27 +54,28 @@ namespace SharpPascal
         {
             var program = ParseProgramHeading();
 
-            // ';'.
-            var t = Tokenizer.CurrentToken;
-            if (t.TokenCode != TokenCode.TOK_SEP)
+            // Expect ';'.
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_SEP)
             {
                 throw new CompilerException("The program name separator ';' expected.");
             }
 
-            ((CompiledProgramParts.Program)program).Block = ParseProgramBlock(new ProgramBlock(null));
+            // Eat ';'.
+            Tokenizer.NextToken();
 
-            // '.'.
-            t = Tokenizer.CurrentToken;
-            if (t.TokenCode != TokenCode.TOK_PROG_END)
+            ((CompiledProgramParts.Program)program).Block = ParseProgramBlock();
+
+            // Expect '.'.
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_PROG_END)
             {
                 throw new CompilerException("The program end '.' expected.");
             }
 
             // Eat '.'.
-            t = Tokenizer.NextToken();
+            Tokenizer.NextToken();
 
-            // EOF.
-            if (t.TokenCode != TokenCode.TOK_EOF)
+            // Expect EOF.
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_EOF)
             {
                 throw new CompilerException("No more tokens expected.");
             }
@@ -150,53 +151,34 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// blok :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
+        /// program-block :: block .
+        /// </summary>
+        /// <param name="parentBlock"></param>
+        /// <returns></returns>
+        private ICompiledProgramPart ParseProgramBlock()
+        { 
+            return ParseBlock(null);
+        }
+
+        /// <summary>
+        /// --block :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
+        /// 
+        /// block :: variable-declaration-part statement-part .
+        /// variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
+        /// statement-part :: compound-statement .
+        /// compound-statement :: "begin" statement-sequence "end" .
+        /// statement-sequence :: statement { ';' statement } .
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
         /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
-        private ICompiledProgramPart ParseProgramBlock(IProgramBlock parentBlock)
+        private ICompiledProgramPart ParseBlock(IProgramBlock parentBlock)
         {
-            var block = new ProgramBlock(parentBlock);
+            var block = (parentBlock == null) 
+                ? (IProgramBlock)new ProgramBlock(parentBlock)
+                : (IProgramBlock)new Block(parentBlock);
 
-            var t = Tokenizer.NextToken();
-
-            // variable-declaration-part
-            ParseVariableDeclarationPart(block, t);
-
-            t = Tokenizer.CurrentToken;
-            if (t.TokenCode != TokenCode.TOK_KEY_BEGIN)
-            {
-                throw new CompilerException("The 'BEGIN' key word expected.");
-            }
-            
-            t = Tokenizer.NextToken();
-            while (t.TokenCode != TokenCode.TOK_EOF)
-            {
-                block.AddCompiledProgramPart(ParseCommand(block, t));
-
-                t = Tokenizer.CurrentToken;
-                if (t.TokenCode == TokenCode.TOK_KEY_END)
-                {
-                    break;
-                }
-
-                if (t.TokenCode == TokenCode.TOK_SEP)
-                {
-                    t = Tokenizer.NextToken();
-
-                    continue;
-                }
-
-                throw new CompilerException("The ';' command separator expected.");
-            }
-
-            if (t.TokenCode != TokenCode.TOK_KEY_END)
-            {
-                throw new CompilerException("The end of program block expected.");
-            }
-
-            // Eat "end".
-            Tokenizer.NextToken();
+            ParseVariableDeclarationPart(block);
+            ParseStatementPart(block);
 
             return block;
         }
@@ -208,9 +190,9 @@ namespace SharpPascal
         /// type-denoter :: "integer" | "real" | "char" | "boolean" | "string" .
         /// </summary>
         /// <param name="programBlock">A program block containing this variables declaration list.</param>
-        private void ParseVariableDeclarationPart(IProgramBlock programBlock, IToken currentToken)
+        private void ParseVariableDeclarationPart(IProgramBlock programBlock)
         {
-            if (currentToken.TokenCode != TokenCode.TOK_KEY_VAR)
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_VAR)
             {
                 return;
             }
@@ -306,6 +288,71 @@ namespace SharpPascal
             foreach (var variableName in variablesList)
             {
                 programBlock.AddVariableDeclaration(variableName, typeName);
+            }
+        }
+
+        /// <summary>
+        /// statement-part :: compound-statement .
+        /// </summary>
+        /// <param name="parentBlock"></param>
+        /// <returns></returns>
+        private void ParseStatementPart(IProgramBlock parentBlock)
+        {
+            ParseCompoundStatement(parentBlock);
+        }
+
+        /// <summary>
+        /// compound-statement :: "begin" statement-sequence "end" .
+        /// </summary>
+        /// <param name="currentBlock">The currently parsed program block.</param>
+        private void ParseCompoundStatement(IProgramBlock currentBlock)
+        {
+            // Expect "BEGIN".
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_BEGIN)
+            {
+                throw new CompilerException("The 'BEGIN' key word expected.");
+            }
+
+            // Eat "BEGIN".
+            Tokenizer.NextToken();
+
+            ParseStatementSequence(currentBlock);
+
+            // Expect "END".
+            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_END)
+            {
+                throw new CompilerException("The 'END' key word expected.");
+            }
+
+            // Eat "END".
+            Tokenizer.NextToken();
+        }
+
+        /// <summary>
+        /// statement-sequence :: statement { ';' statement } .
+        /// </summary>
+        /// <param name="currentBlock">The currently parsed program block.</param>
+        private void ParseStatementSequence(IProgramBlock currentBlock)
+        {
+            var t = Tokenizer.CurrentToken;
+            while (t.TokenCode != TokenCode.TOK_EOF)
+            {
+                currentBlock.AddCompiledProgramPart(ParseCommand(currentBlock, t));
+
+                t = Tokenizer.CurrentToken;
+                if (t.TokenCode == TokenCode.TOK_KEY_END)
+                {
+                    break;
+                }
+
+                if (t.TokenCode == TokenCode.TOK_SEP)
+                {
+                    t = Tokenizer.NextToken();
+
+                    continue;
+                }
+
+                throw new CompilerException("The ';' command separator expected.");
             }
         }
 

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace SharpPascal.CompiledProgramParts
 {
-    public interface IProgramBlock
+    public interface IProgramBlock : ICompiledProgramPart
     {
         /// <summary>
         /// The parent compiled part of this program block.
