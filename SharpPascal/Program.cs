@@ -67,6 +67,19 @@ statement-part :: compound-statement .
 compound-statement :: "begin" statement-sequence "end" .
 statement-sequence :: statement { ';' statement } .
 
+statement :: [ label ':' ] ( simple-statement | structured-statement ) .
+simple-statement :: empty-statement | assignment-statement | procedure-statement | goto-statement .
+empty-statement :: .
+assignment-statement :: ( variable-access | function-identifier ) ":=" expression .
+procedure-statement :: procedure-identifier [ ( actual-parameter-list | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) ] .
+goto-statement :: "goto" label .
+structured-statement :: compound-statement | conditional-statement | repetitive-statement | with-statement .
+actual-parameter-list :: '(' actual-parameter { ',' actual-parameter } `)' .
+actual-parameter :: expression | variable-access | procedure-identifier | function-identifier .
+writeln-parameter-list :: '(' ( file-variable | write-parameter ) { ',' write-parameter } ')' .
+write-parameter :: expression [ ':' expression [ ':' expression ] ] .
+
+
 command :: procedure-identifier list-of-parameters-writeln .
 procedure-identifier :: "writeln" .
 list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .

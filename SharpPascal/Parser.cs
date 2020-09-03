@@ -293,7 +293,7 @@ namespace SharpPascal
             var t = Tokenizer.CurrentToken;
             while (t.TokenCode != TokenCode.TOK_EOF)
             {
-                currentBlock.AddCompiledProgramPart(ParseCommand(currentBlock, t));
+                currentBlock.AddCompiledProgramPart(ParseStatement(currentBlock));
 
                 t = Tokenizer.CurrentToken;
                 if (t.TokenCode == TokenCode.TOK_KEY_END)
@@ -313,69 +313,98 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// command :: empty-command | procedure-identifier list-of-parameters-writeln .
-        /// procedure-identifier:: "writeln" .
-        /// list-of-parameters-writeln:: [ '(' parameter-write ')' ] .
-        /// parameter-write:: string .
+        /// statement :: [ label ':' ] ( simple-statement | structured-statement ) .
+        /// simple-statement :: empty-statement | assignment-statement | procedure-statement | goto-statement .
+        /// empty-statement :: .
+        /// assignment-statement :: ( variable-access | function-identifier ) ":=" expression .
+        /// procedure-statement :: procedure-identifier ( [ actual-parameter-list ] | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) .
+        /// goto-statement :: "goto" label .
+        /// structured-statement :: compound-statement | conditional-statement | repetitive-statement | with-statement .
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
         /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
-        private ICompiledProgramPart ParseCommand(IProgramBlock parentBlock, IToken currentToken)
+        private ICompiledProgramPart ParseStatement(IProgramBlock parentBlock)
         {
-            // procedure-ident paramaters
-            if (currentToken.TokenCode == TokenCode.TOK_IDENT)
+            var t = Tokenizer.CurrentToken;
+            if (t.TokenCode == TokenCode.TOK_IDENT)
             {
-                var procedureIdentifier = currentToken.StringValue.ToLowerInvariant();
-                if (procedureIdentifier == "writeln")
-                {
-                    // Eat "writeln".
-                    var t = Tokenizer.NextToken();
-                    if (t.TokenCode == TokenCode.TOK_LBRA)
-                    {
-                        return ParseWriteLnParams(parentBlock);
-                    }                 
-
-                    return new WritelnCommand(parentBlock);
-                }
-
-                throw new CompilerException($"Undefined identifier: {currentToken.StringValue}");
+                // TODO: Procedure or assignment or function?
+                return ParseProcedureStatement(parentBlock);
             }
-            else if (currentToken.TokenCode == TokenCode.TOK_SEP || currentToken.TokenCode == TokenCode.TOK_KEY_END)
+            else if (t.TokenCode == TokenCode.TOK_SEP || t.TokenCode == TokenCode.TOK_KEY_END)
             {
                 return new EmptyCommand(parentBlock);
             }
 
-            throw new CompilerException($"Unexpected token: {currentToken}");
+            throw new CompilerException($"Unexpected token: {t}");
         }
 
         /// <summary>
-        /// list-of-parameters-write:: [ '(' parameter-write ')' ] .
-        /// parameter-write:: string .
+        /// procedure-statement :: procedure-identifier [ ( actual-parameter-list | read-parameter-list | readln-parameter-list | write-parameter-list | writeln-parameter-list ) ] .
+        /// </summary>
+        /// <param name="parentBlock"></param>
+        /// <returns></returns>
+        private ICompiledProgramPart ParseProcedureStatement(IProgramBlock parentBlock)
+        {
+            var procedureIdentifier = Tokenizer.CurrentToken.StringValue.ToUpperInvariant();
+            if (procedureIdentifier == "WRITELN")
+            {
+                // Eat "writeln".
+                var t = Tokenizer.NextToken();
+                if (t.TokenCode == TokenCode.TOK_LBRA)
+                {
+                    return ParseWritelnParameterList(parentBlock);
+                }
+
+                return new WritelnCommand(parentBlock);
+            }
+
+            throw new CompilerException($"Undefined identifier: {procedureIdentifier}");
+        }
+
+        /// <summary>
+        /// actual-parameter-list :: '(' actual-parameter { ',' actual-parameter } `)' .
+        /// actual-parameter :: expression | variable-access | procedure-identifier | function-identifier .
+        /// writeln-parameter-list :: '(' ( file-variable | write-parameter ) { ',' write-parameter } ')' .
+        /// write-parameter :: expression [ ':' expression [ ':' expression ] ] .
+        /// expression :: string .
         /// </summary>
         /// <param name="parentBlock">A parent program block.</param>
         /// <returns>An ICompiledProgramPart instance representing this compiled program part.</returns>
-        private ICompiledProgramPart ParseWriteLnParams(IProgramBlock parentBlock)
+        private ICompiledProgramPart ParseWritelnParameterList(IProgramBlock parentBlock)
         {
             // Eat "(";
             var t = Tokenizer.NextToken();
             if (t.TokenCode == TokenCode.TOK_STR)
             {
-                var str = t.StringValue;
+                var expression = (Expression)ParseExpression(parentBlock);
 
-                // Eat string.
-                t = Tokenizer.NextToken();
-                if (t.TokenCode == TokenCode.TOK_RBRA)
-                {
-                    // Eat ")".
-                    _ = Tokenizer.NextToken();
+                // ')'.
+                ExpectAndEat(TokenCode.TOK_RBRA, "The end of procedure parameters ')' expected.");
 
-                    return new WritelnCommand(parentBlock, str);
-                }
-           
-                throw new CompilerException("The end of formal parameters (')') expected.");
+                return new WritelnCommand(parentBlock, expression.SValue);
             }
 
-            throw new CompilerException("A formal parameter expected.");
+            throw new CompilerException("A procedure parameter expected.");
+        }
+
+        /// <summary>
+        /// expression :: string .
+        /// </summary>
+        /// <param name="parentBlock"></param>
+        /// <returns></returns>
+        private ICompiledProgramPart ParseExpression(IProgramBlock parentBlock)
+        {
+            if (Tokenizer.CurrentToken.TokenCode == TokenCode.TOK_STR)
+            {
+                var s = Tokenizer.CurrentToken.StringValue;
+
+                Eat();
+
+                return new Expression(parentBlock, s);
+            }
+
+            throw new CompilerException("An expression value expected.");
         }
 
 
