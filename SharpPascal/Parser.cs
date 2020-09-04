@@ -109,13 +109,25 @@ namespace SharpPascal
         {
             Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
 
-            if (Tokenizer.CurrentToken.StringValue != "OUTPUT")
+            var t = Tokenizer.CurrentToken;
+            while (t.TokenCode != TokenCode.TOK_EOF)
             {
-                throw new CompilerException($"Unsupported external file descriptor name '{Tokenizer.CurrentToken.StringValue}' found.");
-            }
+                Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
 
-            // Eat "OUTPUT".
-            Tokenizer.NextToken();
+                // TODO: Process identifier.
+
+                // Eat identifier.
+                t = Tokenizer.NextToken();
+                if (t.TokenCode == TokenCode.TOK_LIST_SEP)
+                {
+                    // Eat ','.
+                    t = Tokenizer.NextToken();
+
+                    continue;
+                }
+
+                break;
+            }
         }
 
         /// <summary>
