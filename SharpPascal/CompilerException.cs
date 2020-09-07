@@ -38,5 +38,17 @@ namespace SharpPascal
         public CompilerException(string message, Exception innerException) : base(message, innerException)
         {
         }
+
+        public CompilerException(int line, int linePosition, string message)
+            : base(string.Format("({0}, {1}) {2}", line, linePosition, message))
+        {
+        }
+
+        public CompilerException(int line, int linePosition, string message, Exception innerException)
+            : base(
+                  string.Format("({0}, {1}) {2}", line, linePosition, message),
+                  innerException)
+        {
+        }
     }
 }
