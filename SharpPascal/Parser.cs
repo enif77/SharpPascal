@@ -191,7 +191,7 @@ namespace SharpPascal
                 // ';' ?
                 if (t.TokenCode != TokenCode.TOK_SEP)
                 {
-                    throw new CompilerException("The end of variable declaration list (';') expected.");
+                    throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "The end of variable declaration list (';') expected.");
                 }
 
                 // Eat ';'.
@@ -216,7 +216,7 @@ namespace SharpPascal
             var t = Tokenizer.CurrentToken;
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
-                throw new CompilerException("An identifier in the variable declaration list expected.");
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "An identifier in the variable declaration list expected.");
             }
 
             var variablesList = new List<string>();
@@ -238,7 +238,7 @@ namespace SharpPascal
                         continue;
                     }
 
-                    throw new CompilerException("An identifier in the variable declaration list expected.");
+                    throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "An identifier in the variable declaration list expected.");
                 }
 
                 // At the end of the variables list?
@@ -248,7 +248,7 @@ namespace SharpPascal
             // ':'?
             if (t.TokenCode != TokenCode.TOK_DDOT)
             {
-                throw new CompilerException("A variable type specification part expected.");
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "A variable type specification part expected.");
             }
 
             // Eat ':'.
@@ -257,7 +257,7 @@ namespace SharpPascal
             // A type identifier.
             if (t.TokenCode != TokenCode.TOK_IDENT)
             {
-                throw new CompilerException("A type denoter in variable declaration expected.");
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "A type denoter in variable declaration expected.");
             }
 
             var typeName = t.StringValue;
@@ -321,7 +321,7 @@ namespace SharpPascal
                     continue;
                 }
 
-                throw new CompilerException("The ';' command separator expected.");
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "The ';' command separator expected.");
             }
         }
 
@@ -349,7 +349,7 @@ namespace SharpPascal
                 return new EmptyCommand(parentBlock);
             }
 
-            throw new CompilerException($"Unexpected token: {t}");
+            throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, $"Unexpected token: {t}");
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace SharpPascal
                 return new WritelnCommand(parentBlock);
             }
 
-            throw new CompilerException($"Undefined identifier: {procedureIdentifier}");
+            throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, $"Undefined identifier: {procedureIdentifier}");
         }
 
         /// <summary>
@@ -398,7 +398,7 @@ namespace SharpPascal
                 return new WritelnCommand(parentBlock, expression.SValue);
             }
 
-            throw new CompilerException("A procedure parameter expected.");
+            throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "A procedure parameter expected.");
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace SharpPascal
                 return new Expression(parentBlock, s);
             }
 
-            throw new CompilerException("An expression value expected.");
+            throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "An expression value expected.");
         }
 
 
@@ -431,7 +431,7 @@ namespace SharpPascal
         {
             if (Tokenizer.CurrentToken.TokenCode != tokenCode)
             {
-                throw new CompilerException(errorMessage);
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, errorMessage);
             }
         }
 
