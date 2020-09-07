@@ -20,6 +20,7 @@ freely, subject to the following restrictions:
 namespace SharpPascal.CompiledProgramParts
 {
     using System;
+    using System.Collections.Generic;
     using System.Text;
 
 
@@ -37,6 +38,41 @@ namespace SharpPascal.CompiledProgramParts
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A program name expected.");
 
             Name = name;
+            _externalFileDescriptors = new Dictionary<string, string>();
+        }
+
+
+        public bool HasExternalFileDescriptor(string name)
+        {
+            return (string.IsNullOrEmpty(name) || _externalFileDescriptors.ContainsKey(name) == false)
+                ? false
+                : _externalFileDescriptors.ContainsKey(name);
+        }
+
+
+        public string GetExternalFileDescriptor(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
+
+            if (_externalFileDescriptors.ContainsKey(name))
+            {
+                throw new CompilerException($"The '{name}' external file descriptor is not defined.");
+            }
+
+            return _externalFileDescriptors[name];
+        }
+
+
+        public void AddExternalFileDescriptor(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
+
+            if (_externalFileDescriptors.ContainsKey(name))
+            {
+                throw new CompilerException($"The '{name}' external file descriptor is already defined.");
+            }
+
+            _externalFileDescriptors.Add(name, name);
         }
 
 
@@ -59,6 +95,9 @@ namespace SharpPascal.CompiledProgramParts
 
             return sb.ToString();
         }
+
+
+        private Dictionary<string, string> _externalFileDescriptors { get; }
 
 
         private static readonly string _stdOutputSourceTemplate = @"private static void _WriteLn(string text = """")

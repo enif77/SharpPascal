@@ -26,7 +26,7 @@ namespace SharpPascal
 
     static class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             Console.WriteLine("Sharp Pascal v1.0");
 
@@ -34,17 +34,28 @@ namespace SharpPascal
             {
                 Console.WriteLine("USAGE: ptocs.exe source.pas");
 
-                return;
+                return 0;
             }
 
-            var parser = new Parser(
+            try
+            {
+                var parser = new Parser(
                 new Tokenizer(File.ReadAllText(args[0])));
 
-            var p = parser.Parse();
+                var p = parser.Parse();
 
-            File.WriteAllText(args[0] + ".cs", p.GenerateOutput());
+                File.WriteAllText(args[0] + ".cs", p.GenerateOutput());
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("Exception: {0}", ex.Message);
 
+                return 1;
+            }
+            
             Console.WriteLine("DONE");
+
+            return 0;
         }
     }
 }

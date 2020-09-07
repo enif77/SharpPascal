@@ -83,7 +83,8 @@ namespace SharpPascal
 
             // An identifier.
             Expect(TokenCode.TOK_IDENT, "A program name expected.");
-            var programName = Tokenizer.CurrentToken.StringValue;
+
+            var program = new CompiledProgramParts.Program(Tokenizer.CurrentToken.StringValue);
 
             // program-parameter-list?
             var t = Tokenizer.NextToken();
@@ -92,20 +93,20 @@ namespace SharpPascal
                 // Eat '('.
                 Tokenizer.NextToken();
 
-                ParseProgramParameterList();
+                ParseProgramParameterList(program);
 
                 // ')'.
                 ExpectAndEat(TokenCode.TOK_RBRA, "The end of program parameter list ')' expected.");
             }
 
-            return new CompiledProgramParts.Program(programName);
+            return program;
         }
 
         /// <summary>
         /// program-parameter-list :: identifier-list .
         /// identifier-list :: identifier { ',' identifier } .
         /// </summary>
-        private void ParseProgramParameterList()
+        private void ParseProgramParameterList(CompiledProgramParts.Program program)
         {
             Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
 
@@ -114,7 +115,7 @@ namespace SharpPascal
             {
                 Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
 
-                // TODO: Process identifier.
+                program.AddExternalFileDescriptor(t.StringValue);
 
                 // Eat identifier.
                 t = Tokenizer.NextToken();
