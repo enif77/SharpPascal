@@ -68,16 +68,30 @@ namespace SharpPascal
         public char CurrentChar { get; private set; }
 
         /// <summary>
+        /// The previous character extracted from the program source.
+        /// </summary>
+        public char PreviousChar { get; private set; }
+
+        /// <summary>
         /// The last token extracted from the program source.
         /// </summary>
         public IToken CurrentToken { get; private set; }
 
+        /// <summary>
+        /// The current line position (1 .. N).
+        /// </summary>
+        public int CurrentLinePosition { get; private set; }
+
+        /// <summary>
+        /// The current line (1 .. N).
+        /// </summary>
+        public int CurrentLine { get; private set; }
 
         /// <summary>
         /// The current source position (from where was the last character).
         /// </summary>
         public int SourcePosition { get; private set; }
-
+        
 
         /// <summary>
         /// Constructor.
@@ -85,6 +99,7 @@ namespace SharpPascal
         public Tokenizer(string source = null)
         {
             Source = source ?? string.Empty;
+            CurrentLine = 1;
             CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
         }
 
@@ -96,7 +111,7 @@ namespace SharpPascal
         {
             if (SourcePosition > Source.Length)
             {
-                throw new Exception("Read beyond the Source end");
+                throw new CompilerException(CurrentLine, CurrentLinePosition, "Read beyond the Source end");
             }
 
             var inComment = false;
@@ -118,18 +133,15 @@ namespace SharpPascal
 
                 if (CurrentChar == '(')
                 {
-                    NextChar();
-
-                    if (CurrentChar == '*')
+                    if (PeakChar() == '*')
                     {
+                        NextChar();
+
                         SkipComment();
 
                         continue;
                     }
-
-                    PreviousChar();
                 }
-
 
                 if (IsLetter(CurrentChar))
                 {
@@ -152,13 +164,13 @@ namespace SharpPascal
                     case '\0': return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
 
                     default:
-                        throw new Exception($"Unknown character '{CurrentChar}' found.");
+                        throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
                 }
             }
 
             if (inComment)
             {
-                throw new Exception("An end of comment expected.");
+                throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of comment expected.");
             }
 
             return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
@@ -217,7 +229,7 @@ namespace SharpPascal
                 }
                 else if (CurrentChar == '{')
                 {
-                    throw new Exception("An end of a comment expected.");
+                    throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of a comment expected.");
                 }
                 else if (CurrentChar == '(')
                 {
@@ -225,7 +237,7 @@ namespace SharpPascal
 
                     if (CurrentChar == '*')
                     {
-                        throw new Exception("An end of a comment expected.");
+                        throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of a comment expected.");
                     }
 
                     continue;
@@ -236,7 +248,7 @@ namespace SharpPascal
 
             if (inComment)
             {
-                throw new Exception("An end of a comment expected.");
+                throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of a comment expected.");
             }
         }
 
@@ -291,7 +303,7 @@ namespace SharpPascal
                 NextChar();
             }
 
-            throw new Exception("Unexpected end of a string.");
+            throw new CompilerException(CurrentLine, CurrentLinePosition, "Unexpected end of a string.");
         }
 
 
@@ -306,7 +318,14 @@ namespace SharpPascal
             {
                 SourcePosition = p;
 
+                PreviousChar = CurrentChar;
                 CurrentChar = Source[SourcePosition];
+                CurrentLinePosition++;
+                if (PreviousChar == '\n')
+                {
+                    CurrentLine++;
+                    CurrentLinePosition = 1;
+                }
             }
             else
             {
@@ -317,31 +336,19 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// Gets the previous character from the current program line source.
+        /// Gets the next char after the current char.
+        /// Does not advance the source position.
         /// </summary>
-        /// <returns>The previous character from the current program line source.</returns>
-        private void PreviousChar()
+        /// <returns>The next char after the current char.</returns>
+        private char PeakChar()
         {
-            if (SourcePosition > 0 && SourcePosition <= Source.Length)
-            {
-                SourcePosition--;
-
-                CurrentChar = Source[SourcePosition];
-            }
-            else if (SourcePosition > Source.Length)
-            {
-                SourcePosition = Source.Length;
-
-                CurrentChar = C_EOF;
-            }
-            else
-            {
-                SourcePosition = -1;
-
-                CurrentChar = C_EOF;
-            }
+            var p = SourcePosition + 1;
+            
+            return (p >= 0 && p < Source.Length)
+                ? Source[p]
+                : C_EOF;
         }
-        
+
         /// <summary>
         /// Checks, if an character is a digit.
         /// </summary>
