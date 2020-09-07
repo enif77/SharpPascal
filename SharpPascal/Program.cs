@@ -48,7 +48,7 @@ namespace SharpPascal
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Exception: {0}", ex.Message);
+                Console.Error.WriteLine("E: {0}", ex.Message);
 
                 return 1;
             }
