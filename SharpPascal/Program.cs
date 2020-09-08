@@ -91,6 +91,27 @@ writeln-parameter-list :: '(' ( file-variable | write-parameter ) { ',' write-pa
 write-parameter :: expression [ ':' expression [ ':' expression ] ] .
 
 
+adding-operator :: '+' | '-' | "or" .
+multiplying-operator :: '*' | '/' | "div" | "mod" | "and" .
+relational-operator :: '=' | '<>' | '<' | '>' | '<=' | '>=' | "in" .
+digit :: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' .
+digit-sequence :: digit { digit } .
+
+sign :: '+' | '-' .
+signed-integer :: [ sign ] unsigned-integer .
+signed-number :: signed-integer | signed-real .
+signed-real :: [ sign ] unsigned-real .
+unsigned-integer :: digit-sequence .
+unsigned-number :: unsigned-integer | unsigned-real .
+unsigned-real :: ( digit-sequence '.' fractional-part [ 'e' scale-factor ] ) | ( digit-sequence 'e' scale-factor ) .
+scale-factor :: [ sign ] digit-sequence .
+fractional-part :: digit-sequence .
+
+label :: digit-sequence .
+label-declaration-part :: [ "label" label {  ',' label } ';' ] .
+goto-statement :: "goto" label .
+
+
 command :: procedure-identifier list-of-parameters-writeln .
 procedure-identifier :: "writeln" .
 list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .
