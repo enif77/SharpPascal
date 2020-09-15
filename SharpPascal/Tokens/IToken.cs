@@ -65,6 +65,24 @@ namespace SharpPascal.Tokens
         /// </summary>
         TOK_IDENT,
 
+        // Operators.
+        TOK_ADD_OP,  // '+'
+        TOK_AND_OP,  // AND
+        TOK_ASGN_OP, // ':='
+        TOK_DIV_OP,  // '/'
+        TOK_EQ_OP,   // '='
+        TOK_DIVI_OP, // DIV
+        TOK_GE_OP,   // '>='
+        TOK_GT_OP,   // '>'
+        TOK_IN_OP,   // IN
+        TOK_LE_OP,   // '<='
+        TOK_LT_OP,   // '<'
+        TOK_MUL_OP,  // '*'
+        TOK_MOD_OP,  // MOD
+        TOK_OR_OP,   // OR
+        TOK_NEQ_OP,  // '<>'
+        TOK_SUB_OP,  // '-'
+
         // Keywords.
         TOK_KEY_BEGIN,
         TOK_KEY_END,

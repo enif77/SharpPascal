@@ -155,9 +155,58 @@ namespace SharpPascal
 
                 switch (CurrentChar)
                 {
+                    case '+': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_ADD_OP);
+                    case '-': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP);
+                    case '*': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_MUL_OP);
+                    case '/': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_DIV_OP);
+                    case '=': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_EQ_OP);
+                    case '<':
+                        {
+                            NextChar();
+
+                            if (CurrentChar == '>')
+                            {
+                                NextChar();
+
+                                return CurrentToken = new SimpleToken(TokenCode.TOK_NEQ_OP);  // '<>'
+                            }
+                            else if (CurrentChar == '=')
+                            {
+                                NextChar();
+
+                                return CurrentToken = new SimpleToken(TokenCode.TOK_LE_OP);  // '<='
+                            }
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_LT_OP);  // '<'
+                        }
+                    case '>':
+                        {
+                            NextChar();
+
+                            if (CurrentChar == '=')
+                            {
+                                NextChar();
+
+                                return CurrentToken = new SimpleToken(TokenCode.TOK_GE_OP);  // '>='
+                            }
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_GT_OP);  // '>'
+                        }
                     case ';': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SEP);
                     case ',': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LIST_SEP);
-                    case ':': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT);
+                    case ':':
+                        {
+                            NextChar();
+
+                            if (CurrentChar == '=')
+                            {
+                                NextChar();
+
+                                return CurrentToken = new SimpleToken(TokenCode.TOK_ASGN_OP);
+                            }
+                            
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT);
+                        }
                     case '(': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
                     case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
                     case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
@@ -187,8 +236,13 @@ namespace SharpPascal
         /// </summary>
         private readonly Dictionary<string, TokenCode> _keyWordsMap = new Dictionary<string, TokenCode>()
         {
+            { "AND", TokenCode.TOK_AND_OP },
             { "BEGIN", TokenCode.TOK_KEY_BEGIN },
+            { "DIV", TokenCode.TOK_DIVI_OP },
             { "END", TokenCode.TOK_KEY_END },
+            { "IN", TokenCode.TOK_IN_OP },
+            { "MOD", TokenCode.TOK_MOD_OP },
+            { "OR", TokenCode.TOK_OR_OP },
             { "PROGRAM", TokenCode.TOK_KEY_PROGRAM },
             { "VAR", TokenCode.TOK_KEY_VAR },
         };
