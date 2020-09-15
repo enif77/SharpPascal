@@ -96,7 +96,7 @@ namespace SharpPascal.Tokens
         TokenCode TokenCode { get; }
         bool BooleanValue { get; }
         float IntegerValue { get; }
-        float RealValue { get; }
+        double RealValue { get; }
         string StringValue { get; }
     }
 }

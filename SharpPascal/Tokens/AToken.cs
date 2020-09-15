@@ -25,7 +25,7 @@ namespace SharpPascal.Tokens
 
         public bool BooleanValue { get; protected set; }
         public float IntegerValue { get; protected set; }
-        public float RealValue { get; protected set; }
+        public double RealValue { get; protected set; }
         public string StringValue { get; protected set; }
 
 
@@ -42,7 +42,26 @@ namespace SharpPascal.Tokens
                 case TokenCode.TOK_LBRA: return "(";
                 case TokenCode.TOK_RBRA: return ")";
                 case TokenCode.TOK_PROG_END: return ".";
-                
+                case TokenCode.TOK_LIST_SEP: return ",";
+                case TokenCode.TOK_DDOT: return ":";
+
+                case TokenCode.TOK_ADD_OP: return "+";
+                case TokenCode.TOK_AND_OP: return "AND";
+                case TokenCode.TOK_ASGN_OP: return ":=";
+                case TokenCode.TOK_DIV_OP: return "/";
+                case TokenCode.TOK_EQ_OP: return "=";
+                case TokenCode.TOK_DIVI_OP: return "DIV";
+                case TokenCode.TOK_GE_OP: return ">=";
+                case TokenCode.TOK_GT_OP: return ">";
+                case TokenCode.TOK_IN_OP: return "IN";
+                case TokenCode.TOK_LE_OP: return "<=";
+                case TokenCode.TOK_LT_OP: return "<";
+                case TokenCode.TOK_MUL_OP: return "*";
+                case TokenCode.TOK_MOD_OP: return "MOD";
+                case TokenCode.TOK_OR_OP: return "OR";
+                case TokenCode.TOK_NEQ_OP: return "<>";
+                case TokenCode.TOK_SUB_OP: return "-";
+
                 case TokenCode.TOK_KEY_BEGIN: return "BEGIN";
                 case TokenCode.TOK_KEY_END: return "END";
                 case TokenCode.TOK_KEY_PROGRAM: return "PROGRAM";
