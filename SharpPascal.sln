@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpPascal", "SharpPascal\SharpPascal.csproj", "{AD597A58-2992-4928-A7D5-2EC82C60D88E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1C7C122F-8FAE-4532-8275-53ABA593DB51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpPascal.Tests", "SharpPascal.Tests\SharpPascal.Tests.csproj", "{4DDD4AB7-466B-48B4-8F5D-8B01804E1366}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{AD597A58-2992-4928-A7D5-2EC82C60D88E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD597A58-2992-4928-A7D5-2EC82C60D88E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD597A58-2992-4928-A7D5-2EC82C60D88E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DDD4AB7-466B-48B4-8F5D-8B01804E1366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DDD4AB7-466B-48B4-8F5D-8B01804E1366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DDD4AB7-466B-48B4-8F5D-8B01804E1366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DDD4AB7-466B-48B4-8F5D-8B01804E1366}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4DDD4AB7-466B-48B4-8F5D-8B01804E1366} = {1C7C122F-8FAE-4532-8275-53ABA593DB51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4614B4D8-26F9-4509-A3C6-5C0C9EBECD51}

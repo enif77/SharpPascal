@@ -57,7 +57,9 @@ namespace SharpPascal
                 _source = value ?? string.Empty;
 
                 SourcePosition = -1;
+                CurrentLine = 1;
                 CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+
                 NextChar();
             }
         }
@@ -98,9 +100,7 @@ namespace SharpPascal
         /// </summary>
         public Tokenizer(string source = null)
         {
-            Source = source ?? string.Empty;
-            CurrentLine = 1;
-            CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+            Source = source;
         }
 
 
