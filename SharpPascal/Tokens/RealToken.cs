@@ -24,9 +24,9 @@ namespace SharpPascal.Tokens
 
     public class RealToken : AToken
     {
-        public RealToken(TokenCode tokenCode, double v)
+        public RealToken(double v)
         {
-            TokenCode = tokenCode;
+            TokenCode = TokenCode.TOK_REAL_NUMBER;
             RealValue = v;
         }
 

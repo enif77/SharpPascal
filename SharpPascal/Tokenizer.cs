@@ -124,28 +124,33 @@ namespace SharpPascal
                     NextChar();
                 }
 
-                if (CurrentChar == '{')
-                {
-                    SkipComment();
+                //if (CurrentChar == '{')
+                //{
+                //    SkipComment();
 
-                    continue;
-                }
+                //    continue;
+                //}
 
-                if (CurrentChar == '(')
-                {
-                    if (PeakChar() == '*')
-                    {
-                        NextChar();
+                //if (CurrentChar == '(')
+                //{
+                //    if (PeakChar() == '*')
+                //    {
+                //        NextChar();
 
-                        SkipComment();
+                //        SkipComment();
 
-                        continue;
-                    }
-                }
+                //        continue;
+                //    }
+                //}
 
                 if (IsLetter(CurrentChar))
                 {
                     return CurrentToken = ParseIdent();
+                }
+
+                if (IsDigit(CurrentChar))
+                {
+                    return CurrentToken = ParseNumber(1);
                 }
 
                 if (CurrentChar == '\'')
@@ -155,8 +160,35 @@ namespace SharpPascal
 
                 switch (CurrentChar)
                 {
-                    case '+': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_ADD_OP);
-                    case '-': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP);
+                    case '{':
+                        {
+                            SkipComment();
+
+                            continue;
+                        }
+
+                    case '+':
+                        {
+                            NextChar();
+
+                            if (IsDigit(CurrentChar))
+                            {
+                                return CurrentToken = ParseNumber(1);
+                            }
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_ADD_OP);
+                        }
+                    case '-':
+                        {
+                            NextChar();
+
+                            if (IsDigit(CurrentChar))
+                            {
+                                return CurrentToken = ParseNumber(-1);
+                            }
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP);
+                        }
                     case '*': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_MUL_OP);
                     case '/': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_DIV_OP);
                     case '=': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_EQ_OP);
@@ -207,7 +239,23 @@ namespace SharpPascal
                             
                             return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT);
                         }
-                    case '(': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
+                    case '(':
+                        {
+                            NextChar();
+
+                            if (CurrentChar == '*')
+                            {
+                                NextChar();
+
+                                SkipComment();
+
+                                continue;
+                            }
+                            else
+                            {
+                                return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
+                            }
+                        }
                     case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
                     case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
                     case '\0': return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
@@ -360,6 +408,93 @@ namespace SharpPascal
             throw new CompilerException(CurrentLine, CurrentLinePosition, "Unexpected end of a string.");
         }
 
+        /// <summary>
+        /// Parses an integer or real number.
+        /// unsigned-integer :: digit-sequence .
+        /// unsigned-number :: unsigned-integer | unsigned-real .
+        /// unsigned-real :: ( digit-sequence '.' fractional-part [ 'e' scale-factor ] ) | ( digit-sequence 'e' scale-factor ) .
+        /// scale-factor :: [ sign ] digit-sequence .
+        /// fractional-part :: digit-sequence .
+        /// sign :: '+' | '-' .
+        /// </summary>
+        /// <param name="sign">1 for positive numbers, -1 for negative numbers.</param>
+        /// <returns></returns>
+        private IToken ParseNumber(int sign)
+        {
+            var isReal = false;
+            var iValue = 0;
+            var rValue = 0.0;
+
+            while (IsDigit(CurrentChar))
+            {
+                iValue = (iValue * 10) + (CurrentChar - '0');
+
+                if (iValue < 0)
+                {
+                    throw new CompilerException(CurrentLine, CurrentLinePosition, "Numeric constant overflow.");
+                }
+
+                NextChar();
+            }
+
+            // digit-sequence '.' fractional-part
+            if (CurrentChar == '.')
+            {
+                rValue = (double)iValue;
+
+                // Eat '.'.
+                NextChar();
+
+                if (IsDigit(CurrentChar) == false)
+                {
+                    throw new CompilerException(CurrentLine, CurrentLinePosition, "A fractional part of a real number expected.");
+                }
+
+                var scale = 1.0;
+                var frac = 0.0;
+                while (IsDigit(CurrentChar))
+                {
+                    frac = (frac * 10.0) + (CurrentChar - '0');
+                    scale *= 10.0;
+
+                    NextChar();
+                }
+
+                rValue += frac / scale;
+
+                isReal = true;
+            }
+
+            // digit-sequence [ '.' fractional-part ] 'e' scale-factor
+            if (CurrentChar == 'e' || CurrentChar == 'E')
+            {
+                rValue = isReal ? rValue : iValue;
+
+                // Eat 'e'.
+                NextChar();
+
+                if (IsDigit(CurrentChar) == false)
+                {
+                    throw new CompilerException(CurrentLine, CurrentLinePosition, "A scale factor of a real number expected.");
+                }
+
+                var fact = 0.0;
+                while (IsDigit(CurrentChar))
+                {
+                    fact = (fact * 10.0) + (CurrentChar - '0');
+
+                    NextChar();
+                }
+
+                rValue *= Math.Pow(10, fact);
+
+                isReal = true;
+            }
+
+            return isReal
+                ? (IToken)new RealToken(rValue * sign)
+                : (IToken)new IntegerToken(iValue * sign);
+        }
 
         /// <summary>
         /// Gets the next character from the current program line source.
@@ -405,6 +540,7 @@ namespace SharpPascal
 
         /// <summary>
         /// Checks, if an character is a digit.
+        /// digit :: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' .
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a digit.</returns>
@@ -415,7 +551,7 @@ namespace SharpPascal
 
         /// <summary>
         /// Checks, if an character is a white character.
-        /// hwite-character = SPACE | TAB .
+        /// hwite-character = SPACE | TAB | '\r' | NEW-LINE .
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a white character.</returns>

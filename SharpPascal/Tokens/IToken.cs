@@ -65,6 +65,16 @@ namespace SharpPascal.Tokens
         /// </summary>
         TOK_IDENT,
 
+        /// <summary>
+        /// An integer number or a label.
+        /// </summary>
+        TOK_INTEGER_NUMBER,
+
+        /// <summary>
+        /// A real number.
+        /// </summary>
+        TOK_REAL_NUMBER,
+
         // Operators.
         TOK_ADD_OP,  // '+'
         TOK_AND_OP,  // AND

@@ -24,9 +24,9 @@ namespace SharpPascal.Tokens
 
     public class IntegerToken : AToken
     {
-        public IntegerToken(TokenCode tokenCode, int v)
+        public IntegerToken(int v)
         {
-            TokenCode = tokenCode;
+            TokenCode = TokenCode.TOK_INTEGER_NUMBER;
             IntegerValue = v;
         }
 

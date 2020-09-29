@@ -64,5 +64,34 @@ namespace SharpPascal.Tests
 
             Assert.Equal(TokenCode.TOK_EOF, _tokenizer.NextToken().TokenCode);
         }
+
+
+        [Theory]
+        [InlineData("0", 0)]
+        [InlineData("-1", -1)]
+        [InlineData("+123", 123)]
+        public void NextToken_Returns_TOK_IDENTIFIER_NUMBER_and_value_when_source_is_integer(string source, int expectedValue)
+        {
+            _tokenizer.Source = source;
+            var tok = _tokenizer.NextToken();
+
+            Assert.Equal(TokenCode.TOK_INTEGER_NUMBER, tok.TokenCode);
+            Assert.Equal(expectedValue, tok.IntegerValue);
+        }
+
+        [Theory]
+        [InlineData("0.0", 0.0)]
+        [InlineData("-1.5", -1.5)]
+        [InlineData("+123.45", 123.45)]
+        [InlineData("12e3", 12000)]
+        [InlineData("12.3e3", 12300)]
+        public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_integer(string source, double expectedValue)
+        {
+            _tokenizer.Source = source;
+            var tok = _tokenizer.NextToken();
+
+            Assert.Equal(TokenCode.TOK_REAL_NUMBER, tok.TokenCode);
+            Assert.Equal(expectedValue, tok.RealValue);
+        }
     }
 }
