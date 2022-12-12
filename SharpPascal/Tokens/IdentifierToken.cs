@@ -19,12 +19,15 @@ freely, subject to the following restrictions:
 
 namespace SharpPascal.Tokens
 {
+    using System;
+    
+    
     public class IdentifierToken : AToken
     {
         public IdentifierToken(string s)
         {
             TokenCode = TokenCode.TOK_IDENT;
-            StringValue = s ?? string.Empty;
+            StringValue = s ?? throw new ArgumentException("An identifier name expected.");
         }
 
 

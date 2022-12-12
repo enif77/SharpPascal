@@ -51,8 +51,14 @@ namespace SharpPascal.Tokens
         /// </summary>
         TOK_DDOT,
 
-        // '(' and ')'.
+        /// <summary>
+        /// '('.
+        /// </summary>
         TOK_LBRA,
+        
+        /// <summary>
+        /// ')'.
+        /// </summary>
         TOK_RBRA,
 
         /// <summary>
@@ -105,7 +111,7 @@ namespace SharpPascal.Tokens
     {
         TokenCode TokenCode { get; }
         bool BooleanValue { get; }
-        float IntegerValue { get; }
+        int IntegerValue { get; }
         double RealValue { get; }
         string StringValue { get; }
     }

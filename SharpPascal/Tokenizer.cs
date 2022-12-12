@@ -47,10 +47,7 @@ namespace SharpPascal
         /// </summary>
         public string Source
         {
-            get
-            {
-                return _source;
-            }
+            get => _source;
 
             set
             {

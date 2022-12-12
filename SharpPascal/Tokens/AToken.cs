@@ -24,15 +24,10 @@ namespace SharpPascal.Tokens
         public TokenCode TokenCode { get; protected set; }
 
         public bool BooleanValue { get; protected set; }
-        public float IntegerValue { get; protected set; }
+        public int IntegerValue { get; protected set; }
         public double RealValue { get; protected set; }
         public string StringValue { get; protected set; }
-
-
-        protected AToken()
-        {
-        }
-
+        
 
         public override string ToString()
         {

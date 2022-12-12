@@ -17,10 +17,11 @@ freely, subject to the following restrictions:
  
  */
 
-using System.Collections.Generic;
-
 namespace SharpPascal.CompiledProgramParts
 {
+    using System.Collections.Generic;
+    
+    
     public interface IProgramBlock : ICompiledProgramPart
     {
         /// <summary>

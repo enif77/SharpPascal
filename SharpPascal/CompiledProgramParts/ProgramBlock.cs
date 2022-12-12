@@ -38,7 +38,7 @@ namespace SharpPascal.CompiledProgramParts
             {
                 sb.Append("static ");
                 sb.Append(variableDeclaration.OutputTypeName);
-                sb.Append(" ");
+                sb.Append(' ');
                 sb.Append(variableDeclaration.Name);
                 sb.AppendLine(";");
             }

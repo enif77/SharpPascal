@@ -44,9 +44,7 @@ namespace SharpPascal.CompiledProgramParts
 
         public bool HasExternalFileDescriptor(string name)
         {
-            return (string.IsNullOrEmpty(name) || _externalFileDescriptors.ContainsKey(name) == false)
-                ? false
-                : _externalFileDescriptors.ContainsKey(name);
+            return string.IsNullOrEmpty(name) == false && _externalFileDescriptors.ContainsKey(name);
         }
 
 

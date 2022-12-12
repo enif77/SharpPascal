@@ -28,7 +28,7 @@ namespace SharpPascal.Tests
 
     public class Tokenizer_Tests
     {
-        private Tokenizer  _tokenizer;
+        private readonly Tokenizer _tokenizer;
 
 
         public Tokenizer_Tests()
@@ -70,7 +70,7 @@ namespace SharpPascal.Tests
         [InlineData("0", 0)]
         [InlineData("-1", -1)]
         [InlineData("+123", 123)]
-        public void NextToken_Returns_TOK_IDENTIFIER_NUMBER_and_value_when_source_is_integer(string source, int expectedValue)
+        public void NextToken_Returns_TOK_IDENTIFIER_NUMBER_and_value_when_source_is_integer_literal(string source, int expectedValue)
         {
             _tokenizer.Source = source;
             var tok = _tokenizer.NextToken();
@@ -85,7 +85,7 @@ namespace SharpPascal.Tests
         [InlineData("+123.45", 123.45)]
         [InlineData("12e3", 12000)]
         [InlineData("12.3e3", 12300)]
-        public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_integer(string source, double expectedValue)
+        public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_real_literal(string source, double expectedValue)
         {
             _tokenizer.Source = source;
             var tok = _tokenizer.NextToken();
