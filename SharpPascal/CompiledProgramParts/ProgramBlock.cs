@@ -24,8 +24,8 @@ namespace SharpPascal.CompiledProgramParts
 
     public class ProgramBlock : AProgramBlockBase
     {
-        public ProgramBlock(IProgramBlock parentBlock)
-            : base(parentBlock)
+        public ProgramBlock()
+            : base(null)
         {
         }
 

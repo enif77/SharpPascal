@@ -73,7 +73,6 @@ namespace SharpPascal
 
         /// <summary>
         /// program-heading :: "program" identifier [ '(' program-parameter-list ')' ] .
-        /// program-block :: block .
         /// </summary>
         /// <returns>A compiled program.</returns>
         private ICompiledProgramPart ParseProgramHeading()
@@ -134,16 +133,13 @@ namespace SharpPascal
         /// <summary>
         /// program-block :: block .
         /// </summary>
-        /// <param name="parentBlock"></param>
-        /// <returns></returns>
+        /// <returns>An ICompiledProgramPart instance representing a compiled program block.</returns>
         private ICompiledProgramPart ParseProgramBlock()
         { 
             return ParseBlock(null);
         }
 
         /// <summary>
-        /// --block :: variable-declaration-part "begin" [ command { ';' command } ] "end" .
-        /// 
         /// block :: variable-declaration-part statement-part .
         /// variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
         /// statement-part :: compound-statement .
@@ -155,7 +151,7 @@ namespace SharpPascal
         private ICompiledProgramPart ParseBlock(IProgramBlock parentBlock)
         {
             var block = (parentBlock == null) 
-                ? (IProgramBlock)new ProgramBlock(parentBlock)
+                ? new ProgramBlock()
                 : (IProgramBlock)new Block(parentBlock);
 
             ParseVariableDeclarationPart(block);

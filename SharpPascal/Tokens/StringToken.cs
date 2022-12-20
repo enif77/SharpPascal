@@ -21,9 +21,9 @@ namespace SharpPascal.Tokens
 {
     public class StringToken : AToken
     {
-        public StringToken(TokenCode tokenCode, string s)
+        public StringToken(string s)
         {
-            TokenCode = tokenCode;
+            TokenCode = TokenCode.TOK_STR;
             StringValue = s ?? string.Empty;
         }
 

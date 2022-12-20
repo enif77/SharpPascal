@@ -394,7 +394,7 @@ namespace SharpPascal
 
                     if (CurrentChar != '\'')
                     {
-                        return new StringToken(TokenCode.TOK_STR, strValueSb.ToString());
+                        return new StringToken(strValueSb.ToString());
                     }
                 }
 
