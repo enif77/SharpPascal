@@ -43,7 +43,7 @@ namespace SharpPascal
                
 
         /// <summary>
-        /// The currentlly parsed source.
+        /// The currently parsed source.
         /// </summary>
         public string Source
         {
@@ -120,25 +120,6 @@ namespace SharpPascal
                 {
                     NextChar();
                 }
-
-                //if (CurrentChar == '{')
-                //{
-                //    SkipComment();
-
-                //    continue;
-                //}
-
-                //if (CurrentChar == '(')
-                //{
-                //    if (PeakChar() == '*')
-                //    {
-                //        NextChar();
-
-                //        SkipComment();
-
-                //        continue;
-                //    }
-                //}
 
                 if (IsLetter(CurrentChar))
                 {
@@ -310,7 +291,8 @@ namespace SharpPascal
 
                     break;
                 }
-                else if (CurrentChar == '*')
+
+                if (CurrentChar == '*')
                 {
                     NextChar();
 
@@ -326,11 +308,13 @@ namespace SharpPascal
 
                     continue;
                 }
-                else if (CurrentChar == '{')
+
+                if (CurrentChar == '{')
                 {
                     throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of a comment expected.");
                 }
-                else if (CurrentChar == '(')
+
+                if (CurrentChar == '(')
                 {
                     NextChar();
 
@@ -372,10 +356,8 @@ namespace SharpPascal
             {
                 return new SimpleToken(_keyWordsMap[strValue]);
             }
-            else
-            {
-                return new IdentifierToken(strValue);
-            }
+
+            return new IdentifierToken(strValue);
         }
 
         /// <summary>
@@ -489,8 +471,8 @@ namespace SharpPascal
             }
 
             return isReal
-                ? (IToken)new RealToken(rValue * sign)
-                : (IToken)new IntegerToken(iValue * sign);
+                ? new RealToken(rValue * sign)
+                : new IntegerToken(iValue * sign);
         }
 
         /// <summary>
