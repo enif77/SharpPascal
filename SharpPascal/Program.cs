@@ -1,4 +1,4 @@
-﻿/* SharpPascal - (C) 2020 Premysl Fara 
+﻿/* SharpPascal - (C) 2020 - 2022 Premysl Fara 
  
 SharpPascal is available under the zlib license:
 This software is provided 'as-is', without any express or implied
@@ -40,7 +40,12 @@ namespace SharpPascal
             try
             {
                 var parser = new Parser(
-                new Tokenizer(File.ReadAllText(args[0])));
+                new Tokenizer(
+                    new StringSourceReader(
+                        File.ReadAllText(args[0])
+                        )
+                    )
+                );
 
                 var p = parser.Parse();
 

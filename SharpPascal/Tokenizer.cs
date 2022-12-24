@@ -1,4 +1,4 @@
-﻿/* SharpPascal - (C) 2020 Premysl Fara 
+﻿/* SharpPascal - (C) 2020 - 2022 Premysl Fara 
  
 SharpPascal is available under the zlib license:
 This software is provided 'as-is', without any express or implied
@@ -34,42 +34,28 @@ namespace SharpPascal
         /// <summary>
         /// The end of the source character.
         /// </summary>
-        public const char C_EOF = Char.MinValue;
+        public const int C_EOF = -1;
 
-        /// <summary>
-        /// The end of the line character.
-        /// </summary>
-        public const char C_EOLN = '\n';
+        // /// <summary>
+        // /// The end of the line character.
+        // /// </summary>
+        // public const char C_EOLN = '\n';
                
 
         /// <summary>
         /// The currently parsed source.
         /// </summary>
-        public string Source
-        {
-            get => _source;
-
-            set
-            {
-                _source = value ?? string.Empty;
-
-                SourcePosition = -1;
-                CurrentLine = 1;
-                CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
-
-                NextChar();
-            }
-        }
+        public ISourceReader Source { get; }
 
         /// <summary>
         /// The last character extracted from the program source.
         /// </summary>
-        public char CurrentChar { get; private set; }
+        public int CurrentChar => Source.CurrentChar;
 
-        /// <summary>
-        /// The previous character extracted from the program source.
-        /// </summary>
-        public char PreviousChar { get; private set; }
+        // /// <summary>
+        // /// The previous character extracted from the program source.
+        // /// </summary>
+        // public int PreviousChar { get; private set; }
 
         /// <summary>
         /// The last token extracted from the program source.
@@ -95,9 +81,10 @@ namespace SharpPascal
         /// <summary>
         /// Constructor.
         /// </summary>
-        public Tokenizer(string source = null)
+        public Tokenizer(ISourceReader source)
         {
-            Source = source;
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
         }
 
 
@@ -106,13 +93,15 @@ namespace SharpPascal
         /// </summary>
         public IToken NextToken()
         {
-            if (SourcePosition > Source.Length)
-            {
-                throw new CompilerException(CurrentLine, CurrentLinePosition, "Read beyond the Source end");
-            }
+            // if (CurrentChar < 0)
+            // {
+            //     throw new CompilerException(CurrentLine, CurrentLinePosition, "Read beyond the Source end");
+            // }
 
             var inComment = false;
 
+            Source.NextChar();
+            
             while (CurrentChar != C_EOF)
             {
                 // Skip white chars.
@@ -481,41 +470,36 @@ namespace SharpPascal
         /// <returns>The next character from the current program line source.</returns>
         private void NextChar()
         {
-            var p = SourcePosition + 1;
-            if (p >= 0 && p < Source.Length)
+            var lastChar = CurrentChar;
+            var c = Source.NextChar();
+            if (c < 0)
             {
-                SourcePosition = p;
-
-                PreviousChar = CurrentChar;
-                CurrentChar = Source[SourcePosition];
-                CurrentLinePosition++;
-                if (PreviousChar == '\n')
-                {
-                    CurrentLine++;
-                    CurrentLinePosition = 1;
-                }
+               return; 
             }
-            else
-            {
-                SourcePosition = Source.Length;
-
-                CurrentChar = C_EOF;
-            }
-        }
-
-        /// <summary>
-        /// Gets the next char after the current char.
-        /// Does not advance the source position.
-        /// </summary>
-        /// <returns>The next char after the current char.</returns>
-        private char PeakChar()
-        {
-            var p = SourcePosition + 1;
             
-            return (p >= 0 && p < Source.Length)
-                ? Source[p]
-                : C_EOF;
+            SourcePosition += 1;
+            // PreviousChar = currentChar;
+            CurrentLinePosition++;
+            if (lastChar == '\n')
+            {
+                CurrentLine++;
+                CurrentLinePosition = 1;
+            }
         }
+
+        // /// <summary>
+        // /// Gets the next char after the current char.
+        // /// Does not advance the source position.
+        // /// </summary>
+        // /// <returns>The next char after the current char.</returns>
+        // private char PeakChar()
+        // {
+        //     var p = SourcePosition + 1;
+        //     
+        //     return (p >= 0 && p < Source.Length)
+        //         ? Source[p]
+        //         : C_EOF;
+        // }
 
         /// <summary>
         /// Checks, if an character is a digit.
@@ -523,7 +507,7 @@ namespace SharpPascal
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a digit.</returns>
-        public static bool IsDigit(char c)
+        private static bool IsDigit(int c)
         {
             return c >= '0' && c <= '9';
         }
@@ -534,7 +518,7 @@ namespace SharpPascal
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a white character.</returns>
-        public static bool IsWhite(char c)
+        private static bool IsWhite(int c)
         {
             return c == ' ' || c == '\t' || c == '\r' || c == '\n';
         }
@@ -544,7 +528,7 @@ namespace SharpPascal
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a letter.</returns>
-        public static bool IsLetter(char c)
+        private static bool IsLetter(int c)
         {
             return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
         }
