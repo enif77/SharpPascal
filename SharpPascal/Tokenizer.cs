@@ -36,10 +36,10 @@ namespace SharpPascal
         /// </summary>
         public const int C_EOF = -1;
 
-        // /// <summary>
-        // /// The end of the line character.
-        // /// </summary>
-        // public const char C_EOLN = '\n';
+        /// <summary>
+        /// The end of the line character.
+        /// </summary>
+        public const char C_EOLN = '\n';
                
 
         /// <summary>
@@ -51,12 +51,7 @@ namespace SharpPascal
         /// The last character extracted from the program source.
         /// </summary>
         public int CurrentChar => Source.CurrentChar;
-
-        // /// <summary>
-        // /// The previous character extracted from the program source.
-        // /// </summary>
-        // public int PreviousChar { get; private set; }
-
+        
         /// <summary>
         /// The last token extracted from the program source.
         /// </summary>
@@ -72,11 +67,6 @@ namespace SharpPascal
         /// </summary>
         public int CurrentLine { get; private set; }
 
-        /// <summary>
-        /// The current source position (from where was the last character).
-        /// </summary>
-        public int SourcePosition { get; private set; }
-        
 
         /// <summary>
         /// Constructor.
@@ -85,6 +75,9 @@ namespace SharpPascal
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+            
+            // Read the first char from the source.
+            Source.NextChar();
         }
 
 
@@ -93,15 +86,8 @@ namespace SharpPascal
         /// </summary>
         public IToken NextToken()
         {
-            // if (CurrentChar < 0)
-            // {
-            //     throw new CompilerException(CurrentLine, CurrentLinePosition, "Read beyond the Source end");
-            // }
-
             var inComment = false;
 
-            Source.NextChar();
-            
             while (CurrentChar != C_EOF)
             {
                 // Skip white chars.
@@ -169,7 +155,8 @@ namespace SharpPascal
 
                                 return CurrentToken = new SimpleToken(TokenCode.TOK_NEQ_OP);  // '<>'
                             }
-                            else if (CurrentChar == '=')
+
+                            if (CurrentChar == '=')
                             {
                                 NextChar();
 
@@ -218,14 +205,13 @@ namespace SharpPascal
 
                                 continue;
                             }
-                            else
-                            {
-                                return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
-                            }
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
                         }
                     case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
                     case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
-                    case '\0': return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+                    
+                    case C_EOF: return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
 
                     default:
                         throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
@@ -239,12 +225,7 @@ namespace SharpPascal
 
             return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
         }
-
-
-        /// <summary>
-        /// The current program source.
-        /// </summary>
-        private string _source;
+        
 
         /// <summary>
         /// The keyword - token map.
@@ -330,12 +311,14 @@ namespace SharpPascal
         /// <param name="c">The first character of the parsed identifier.</param>
         private IToken ParseIdent()
         {
-            var strValueSb = new StringBuilder(CurrentChar.ToString());
+            var strValueSb = new StringBuilder();
 
+            strValueSb.Append((char)CurrentChar);
+            
             NextChar();
             while (IsDigit(CurrentChar) || IsLetter(CurrentChar))
             {
-                strValueSb.Append(CurrentChar);
+                strValueSb.Append((char)CurrentChar);
 
                 NextChar();
             }
@@ -369,7 +352,7 @@ namespace SharpPascal
                     }
                 }
 
-                strValueSb.Append(CurrentChar);
+                strValueSb.Append((char)CurrentChar);
                 NextChar();
             }
 
@@ -408,7 +391,7 @@ namespace SharpPascal
             // digit-sequence '.' fractional-part
             if (CurrentChar == '.')
             {
-                rValue = (double)iValue;
+                rValue = iValue;
 
                 // Eat '.'.
                 NextChar();
@@ -476,30 +459,14 @@ namespace SharpPascal
             {
                return; 
             }
-            
-            SourcePosition += 1;
-            // PreviousChar = currentChar;
+
             CurrentLinePosition++;
-            if (lastChar == '\n')
+            if (lastChar == C_EOLN)
             {
                 CurrentLine++;
                 CurrentLinePosition = 1;
             }
         }
-
-        // /// <summary>
-        // /// Gets the next char after the current char.
-        // /// Does not advance the source position.
-        // /// </summary>
-        // /// <returns>The next char after the current char.</returns>
-        // private char PeakChar()
-        // {
-        //     var p = SourcePosition + 1;
-        //     
-        //     return (p >= 0 && p < Source.Length)
-        //         ? Source[p]
-        //         : C_EOF;
-        // }
 
         /// <summary>
         /// Checks, if an character is a digit.
@@ -514,7 +481,7 @@ namespace SharpPascal
 
         /// <summary>
         /// Checks, if an character is a white character.
-        /// hwite-character = SPACE | TAB | '\r' | NEW-LINE .
+        /// white-character = SPACE | TAB | '\r' | NEW-LINE .
         /// </summary>
         /// <param name="c">A character.</param>
         /// <returns>True, if a character is a white character.</returns>

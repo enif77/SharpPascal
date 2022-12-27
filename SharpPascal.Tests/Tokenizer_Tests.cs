@@ -44,13 +44,13 @@ namespace SharpPascal.Tests
             Assert.Equal(TokenCode.TOK_EOF, t.CurrentToken.TokenCode);
         }
 
-        [Fact]
-        public void SourcePosition_is_0_when_Tokenizer_is_just_created()
-        {
-            var t = new Tokenizer(new StringSourceReader(string.Empty));
-            
-            Assert.Equal(0, t.SourcePosition);
-        }
+        // [Fact]
+        // public void SourcePosition_is_0_when_Tokenizer_is_just_created()
+        // {
+        //     var t = new Tokenizer(new StringSourceReader(string.Empty));
+        //     
+        //     Assert.Equal(0, t.SourcePosition);
+        // }
         
         [Theory]
         [InlineData("")]
