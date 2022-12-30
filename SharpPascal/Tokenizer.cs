@@ -150,36 +150,10 @@ namespace SharpPascal
                         return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP, currentLinePosition, currentLine);
                     }
 
-                    case '*':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
-                        
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_MUL_OP, currentLinePosition, currentLine);
-                    }
+                    case '*': return ParseSimpleToken(TokenCode.TOK_MUL_OP);
+                    case '/': return ParseSimpleToken(TokenCode.TOK_DIV_OP);
+                    case '=': return ParseSimpleToken(TokenCode.TOK_EQ_OP);
 
-                    case '/':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
-
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_DIV_OP, currentLinePosition, currentLine);
-                    }
-
-                    case '=':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
-
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_EQ_OP, currentLinePosition, currentLine);
-                    }
-                    
                     case '<':
                     {
                         var currentLinePosition = CurrentLinePosition;
@@ -221,26 +195,9 @@ namespace SharpPascal
                         return CurrentToken = new SimpleToken(TokenCode.TOK_GT_OP, currentLinePosition, currentLine);  // '>'
                     }
 
-                    case ';':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
+                    case ';': return ParseSimpleToken(TokenCode.TOK_SEP);
+                    case ',': return ParseSimpleToken(TokenCode.TOK_LIST_SEP);
 
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_SEP, currentLinePosition, currentLine);
-                    }
-
-                    case ',':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
-
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_LIST_SEP, currentLinePosition, currentLine);
-                    }
-                    
                     case ':':
                     {
                         var currentLinePosition = CurrentLinePosition;
@@ -277,26 +234,9 @@ namespace SharpPascal
                         return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA, currentLinePosition, currentLine);
                     }
                     
-                    case ')':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
+                    case ')': return ParseSimpleToken(TokenCode.TOK_RBRA);
+                    case '.': return ParseSimpleToken(TokenCode.TOK_PROG_END);
 
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA, currentLinePosition, currentLine);
-                    }
-
-                    case '.':
-                    {
-                        var currentLinePosition = CurrentLinePosition;
-                        var currentLine = CurrentLine;
-                        
-                        NextChar();
-
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END, currentLinePosition, currentLine);
-                    }
-                    
                     case C_EOF: return CurrentToken = new SimpleToken(TokenCode.TOK_EOF, CurrentLinePosition, CurrentLine);
 
                     default:
@@ -387,9 +327,22 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// Parses an identifier the ECMA-55 rules.
+        /// Parses a simple token.
         /// </summary>
-        /// <param name="c">The first character of the parsed identifier.</param>
+        /// <param name="tokenCode">A token code.</param>
+        private IToken ParseSimpleToken(TokenCode tokenCode)
+        {
+            var currentLinePosition = CurrentLinePosition;
+            var currentLine = CurrentLine;
+                        
+            NextChar();
+                        
+            return CurrentToken = new SimpleToken(tokenCode, currentLinePosition, currentLine);
+        }
+        
+        /// <summary>
+        /// Parses an identifier using the ECMA-55 rules.
+        /// </summary>
         private IToken ParseIdent()
         {
             var currentLinePosition = CurrentLinePosition;
@@ -588,6 +541,5 @@ namespace SharpPascal
         {
             return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
         }
-
     }
 }
