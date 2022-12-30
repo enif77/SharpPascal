@@ -74,7 +74,9 @@ namespace SharpPascal
         public Tokenizer(ISourceReader source)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+            CurrentLinePosition = 1;
+            CurrentLine = 1;
+            CurrentToken = new SimpleToken(TokenCode.TOK_EOF, CurrentLinePosition, CurrentLine);
             
             // Read the first char from the source.
             Source.NextChar();
@@ -86,8 +88,6 @@ namespace SharpPascal
         /// </summary>
         public IToken NextToken()
         {
-            var inComment = false;
-
             while (CurrentChar != C_EOF)
             {
                 // Skip white chars.
@@ -103,7 +103,7 @@ namespace SharpPascal
 
                 if (IsDigit(CurrentChar))
                 {
-                    return CurrentToken = ParseNumber(1);
+                    return CurrentToken = ParseNumber(1, CurrentLinePosition, CurrentLine);
                 }
 
                 if (CurrentChar == '\'')
@@ -114,123 +114,204 @@ namespace SharpPascal
                 switch (CurrentChar)
                 {
                     case '{':
+                    {
+                        SkipComment();
+
+                        continue;
+                    }
+
+                    case '+':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                            
+                        NextChar();
+
+                        if (IsDigit(CurrentChar))
                         {
+                            return CurrentToken = ParseNumber(1, currentLinePosition, currentLine);
+                        }
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_ADD_OP, currentLinePosition, currentLine);
+                    }
+                    
+                    case '-':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        if (IsDigit(CurrentChar))
+                        {
+                            return CurrentToken = ParseNumber(-1, currentLinePosition, currentLine);
+                        }
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP, currentLinePosition, currentLine);
+                    }
+
+                    case '*':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+                        
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_MUL_OP, currentLinePosition, currentLine);
+                    }
+
+                    case '/':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_DIV_OP, currentLinePosition, currentLine);
+                    }
+
+                    case '=':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_EQ_OP, currentLinePosition, currentLine);
+                    }
+                    
+                    case '<':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        if (CurrentChar == '>')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_NEQ_OP, currentLinePosition, currentLine);  // '<>'
+                        }
+
+                        if (CurrentChar == '=')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_LE_OP, currentLinePosition, currentLine);  // '<='
+                        }
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_LT_OP, currentLinePosition, currentLine);  // '<'
+                    }
+                    
+                    case '>':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        if (CurrentChar == '=')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_GE_OP, currentLinePosition, currentLine);  // '>='
+                        }
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_GT_OP, currentLinePosition, currentLine);  // '>'
+                    }
+
+                    case ';':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_SEP, currentLinePosition, currentLine);
+                    }
+
+                    case ',':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_LIST_SEP, currentLinePosition, currentLine);
+                    }
+                    
+                    case ':':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        if (CurrentChar == '=')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_ASGN_OP, currentLinePosition, currentLine);
+                        }
+                        
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT, currentLinePosition, currentLine);
+                    }
+                    
+                    case '(':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        if (CurrentChar == '*')
+                        {
+                            NextChar();
+
                             SkipComment();
 
                             continue;
                         }
 
-                    case '+':
-                        {
-                            NextChar();
-
-                            if (IsDigit(CurrentChar))
-                            {
-                                return CurrentToken = ParseNumber(1);
-                            }
-
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_ADD_OP);
-                        }
-                    case '-':
-                        {
-                            NextChar();
-
-                            if (IsDigit(CurrentChar))
-                            {
-                                return CurrentToken = ParseNumber(-1);
-                            }
-
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_SUB_OP);
-                        }
-                    case '*': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_MUL_OP);
-                    case '/': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_DIV_OP);
-                    case '=': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_EQ_OP);
-                    case '<':
-                        {
-                            NextChar();
-
-                            if (CurrentChar == '>')
-                            {
-                                NextChar();
-
-                                return CurrentToken = new SimpleToken(TokenCode.TOK_NEQ_OP);  // '<>'
-                            }
-
-                            if (CurrentChar == '=')
-                            {
-                                NextChar();
-
-                                return CurrentToken = new SimpleToken(TokenCode.TOK_LE_OP);  // '<='
-                            }
-
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_LT_OP);  // '<'
-                        }
-                    case '>':
-                        {
-                            NextChar();
-
-                            if (CurrentChar == '=')
-                            {
-                                NextChar();
-
-                                return CurrentToken = new SimpleToken(TokenCode.TOK_GE_OP);  // '>='
-                            }
-
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_GT_OP);  // '>'
-                        }
-                    case ';': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_SEP);
-                    case ',': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_LIST_SEP);
-                    case ':':
-                        {
-                            NextChar();
-
-                            if (CurrentChar == '=')
-                            {
-                                NextChar();
-
-                                return CurrentToken = new SimpleToken(TokenCode.TOK_ASGN_OP);
-                            }
-                            
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_DDOT);
-                        }
-                    case '(':
-                        {
-                            NextChar();
-
-                            if (CurrentChar == '*')
-                            {
-                                NextChar();
-
-                                SkipComment();
-
-                                continue;
-                            }
-
-                            return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA);
-                        }
-                    case ')': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA);
-                    case '.': NextChar(); return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END);
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA, currentLinePosition, currentLine);
+                    }
                     
-                    case C_EOF: return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+                    case ')':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_RBRA, currentLinePosition, currentLine);
+                    }
+
+                    case '.':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END, currentLinePosition, currentLine);
+                    }
+                    
+                    case C_EOF: return CurrentToken = new SimpleToken(TokenCode.TOK_EOF, CurrentLinePosition, CurrentLine);
 
                     default:
                         throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
                 }
             }
 
-            if (inComment)
-            {
-                throw new CompilerException(CurrentLine, CurrentLinePosition, "An end of comment expected.");
-            }
-
-            return CurrentToken = new SimpleToken(TokenCode.TOK_EOF);
+            return CurrentToken = new SimpleToken(TokenCode.TOK_EOF, CurrentLinePosition, CurrentLine);
         }
         
 
         /// <summary>
         /// The keyword - token map.
         /// </summary>
-        private readonly Dictionary<string, TokenCode> _keyWordsMap = new Dictionary<string, TokenCode>()
+        private readonly Dictionary<string, TokenCode> _keyWordsMap = new()
         {
             { "AND", TokenCode.TOK_AND_OP },
             { "BEGIN", TokenCode.TOK_KEY_BEGIN },
@@ -311,6 +392,9 @@ namespace SharpPascal
         /// <param name="c">The first character of the parsed identifier.</param>
         private IToken ParseIdent()
         {
+            var currentLinePosition = CurrentLinePosition;
+            var currentLine = CurrentLine;
+            
             var strValueSb = new StringBuilder();
 
             strValueSb.Append((char)CurrentChar);
@@ -326,10 +410,10 @@ namespace SharpPascal
             var strValue = strValueSb.ToString().ToUpperInvariant();
             if (_keyWordsMap.ContainsKey(strValue))
             {
-                return new SimpleToken(_keyWordsMap[strValue]);
+                return new SimpleToken(_keyWordsMap[strValue], currentLinePosition, currentLine);
             }
 
-            return new IdentifierToken(strValue);
+            return new IdentifierToken(strValue, currentLinePosition, currentLine);
         }
 
         /// <summary>
@@ -337,6 +421,9 @@ namespace SharpPascal
         /// </summary>
         private IToken ParseString()
         {
+            var currentLinePosition = CurrentLinePosition;
+            var currentLine = CurrentLine;
+            
             var strValueSb = new StringBuilder();
 
             NextChar();
@@ -348,7 +435,7 @@ namespace SharpPascal
 
                     if (CurrentChar != '\'')
                     {
-                        return new StringToken(strValueSb.ToString());
+                        return new StringToken(strValueSb.ToString(), currentLinePosition, currentLine);
                     }
                 }
 
@@ -360,7 +447,7 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// Parses an integer or real number.
+        /// Parses an integer or a real number.
         /// unsigned-integer :: digit-sequence .
         /// unsigned-number :: unsigned-integer | unsigned-real .
         /// unsigned-real :: ( digit-sequence '.' fractional-part [ 'e' scale-factor ] ) | ( digit-sequence 'e' scale-factor ) .
@@ -368,9 +455,11 @@ namespace SharpPascal
         /// fractional-part :: digit-sequence .
         /// sign :: '+' | '-' .
         /// </summary>
-        /// <param name="sign">1 for positive numbers, -1 for negative numbers.</param>
-        /// <returns></returns>
-        private IToken ParseNumber(int sign)
+        /// <param name="sign">A number sign. 1 is a positive number, -1 is a negative number.</param>
+        /// <param name="linePosition">A line position of the first char of the returned token.</param>
+        /// <param name="line">At which line is the first char of the returned token.</param>
+        /// <returns>A token representing a number or an operator.</returns>
+        private IToken ParseNumber(int sign, int linePosition, int line)
         {
             var isReal = false;
             var iValue = 0;
@@ -443,8 +532,8 @@ namespace SharpPascal
             }
 
             return isReal
-                ? new RealToken(rValue * sign)
-                : new IntegerToken(iValue * sign);
+                ? new RealToken(rValue * sign, linePosition, line)
+                : new IntegerToken(iValue * sign, linePosition, line);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿/* SharpPascal - (C) 2020 Premysl Fara 
+﻿/* SharpPascal - (C) 2020 - 2022 Premysl Fara 
  
 SharpPascal is available under the zlib license:
 This software is provided 'as-is', without any express or implied
@@ -114,5 +114,15 @@ namespace SharpPascal.Tokens
         int IntegerValue { get; }
         double RealValue { get; }
         string StringValue { get; }
+        
+        /// <summary>
+        /// The line position (1 .. N).
+        /// </summary>
+        int LinePosition { get; }
+
+        /// <summary>
+        /// The line (1 .. N).
+        /// </summary>
+        public int Line { get; }
     }
 }

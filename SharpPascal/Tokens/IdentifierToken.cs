@@ -1,4 +1,4 @@
-﻿/* SharpPascal - (C) 2020 Premysl Fara 
+﻿/* SharpPascal - (C) 2020 - 2022 Premysl Fara 
  
 SharpPascal is available under the zlib license:
 This software is provided 'as-is', without any express or implied
@@ -24,7 +24,8 @@ namespace SharpPascal.Tokens
     
     public class IdentifierToken : AToken
     {
-        public IdentifierToken(string s)
+        public IdentifierToken(string s, int linePosition, int line)
+            : base(linePosition, line)
         {
             TokenCode = TokenCode.TOK_IDENT;
             StringValue = s ?? throw new ArgumentException("An identifier name expected.");

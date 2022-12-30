@@ -1,4 +1,4 @@
-﻿/* SharpPascal - (C) 2020 Premysl Fara 
+﻿/* SharpPascal - (C) 2020 - 2022 Premysl Fara 
  
 SharpPascal is available under the zlib license:
 This software is provided 'as-is', without any express or implied
@@ -17,17 +17,35 @@ freely, subject to the following restrictions:
  
  */
 
+using System;
+
 namespace SharpPascal.Tokens
 {
     public abstract class AToken : IToken
     {
-        public TokenCode TokenCode { get; protected set; }
+        public TokenCode TokenCode { get; protected init; }
 
-        public bool BooleanValue { get; protected set; }
-        public int IntegerValue { get; protected set; }
-        public double RealValue { get; protected set; }
-        public string StringValue { get; protected set; }
-        
+        public bool BooleanValue { get; protected init; }
+        public int IntegerValue { get; protected init; }
+        public double RealValue { get; protected init; }
+        public string StringValue { get; protected init; }
+        public int Line { get; set; }
+        public int LinePosition { get; set; }
+
+
+        protected AToken(int linePosition, int line)
+        {
+            if (linePosition <= 0) throw new ArgumentOutOfRangeException(
+                nameof(linePosition),
+                "The linePosition parameter should be greater than 0.");
+            
+            if (line <= 0) throw new ArgumentOutOfRangeException(
+                nameof(line),
+                "The line parameter should be greater than 0.");
+
+            LinePosition = linePosition;
+            Line = line;
+        }
 
         public override string ToString()
         {
