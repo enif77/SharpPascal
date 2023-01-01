@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿/* Copyright (C) Premysl Fara and Contributors */
 
 namespace SharpPascal.CompiledProgramParts
 {
