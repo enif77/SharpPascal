@@ -1,6 +1,6 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal.Tokens
+namespace SharpPascal
 {
     public enum TokenCode
     {

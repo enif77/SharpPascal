@@ -1,9 +1,9 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal.CompiledProgramParts
+namespace SharpPascal
 {
     using System.Collections.Generic;
-    
+
     
     public interface IProgramBlock : ICompiledProgramPart
     {

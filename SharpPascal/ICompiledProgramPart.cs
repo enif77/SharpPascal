@@ -1,6 +1,6 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal.CompiledProgramParts
+namespace SharpPascal
 {
     public interface ICompiledProgramPart
     {
