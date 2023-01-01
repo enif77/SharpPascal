@@ -1,9 +1,10 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-using System;
-
 namespace SharpPascal.Tokens
 {
+    using System;
+    
+    
     public abstract class AToken : IToken
     {
         public TokenCode TokenCode { get; protected init; }

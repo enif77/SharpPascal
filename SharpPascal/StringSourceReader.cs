@@ -1,37 +1,38 @@
 /* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal;
-
-using System;
-
-
-public class StringSourceReader : ISourceReader
+namespace SharpPascal
 {
-    public int CurrentChar { get; private set; }
+    using System;
 
 
-    public StringSourceReader(string src)
+    public class StringSourceReader : ISourceReader
     {
-        _src = src ?? throw new ArgumentNullException(nameof(src));
-        _sourcePosition = -1;
-        CurrentChar = -1;
-    }
+        public int CurrentChar { get; private set; }
 
 
-    public int NextChar()
-    {
-        _sourcePosition++;
-        if (_sourcePosition < _src.Length)
+        public StringSourceReader(string src)
         {
-            return CurrentChar = _src[_sourcePosition];
+            _src = src ?? throw new ArgumentNullException(nameof(src));
+            _sourcePosition = -1;
+            CurrentChar = -1;
         }
+
+
+        public int NextChar()
+        {
+            _sourcePosition++;
+            if (_sourcePosition < _src.Length)
+            {
+                return CurrentChar = _src[_sourcePosition];
+            }
         
-        _sourcePosition = _src.Length;
+            _sourcePosition = _src.Length;
 
-        return CurrentChar = -1;
+            return CurrentChar = -1;
+        }
+
+
+        private readonly string _src;
+        private int _sourcePosition;
     }
-
-
-    private readonly string _src;
-    private int _sourcePosition;
 }
