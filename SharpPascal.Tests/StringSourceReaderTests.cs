@@ -7,7 +7,7 @@ namespace SharpPascal.Tests
     using Xunit;
 
 
-    public class StringSourceReader_Tests
+    public sealed class StringSourceReaderTests
     {
         [Fact]
         public void Empty_string_is_valid_source()

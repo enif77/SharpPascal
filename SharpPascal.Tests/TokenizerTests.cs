@@ -2,14 +2,10 @@
 
 namespace SharpPascal.Tests
 {
-    using System;
-
     using Xunit;
 
-    using SharpPascal.Tokens;
 
-
-    public class Tokenizer_Tests
+    public sealed class TokenizerTests
     {
         [Fact]
         public void CurrentChar_is_C_EOF_when_Tokenizer_is_just_created()
