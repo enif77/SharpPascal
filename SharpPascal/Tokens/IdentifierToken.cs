@@ -10,8 +10,13 @@ namespace SharpPascal.Tokens
         public IdentifierToken(string s, int linePosition, int line)
             : base(linePosition, line)
         {
+            if (string.IsNullOrWhiteSpace(s))
+            {
+                throw new ArgumentException("An identifier name expected.");
+            }
+
             TokenCode = TokenCode.TOK_IDENT;
-            StringValue = s ?? throw new ArgumentException("An identifier name expected.");
+            StringValue = s;
         }
 
 
