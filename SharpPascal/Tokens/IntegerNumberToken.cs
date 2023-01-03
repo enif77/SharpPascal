@@ -5,9 +5,9 @@ namespace SharpPascal.Tokens
     using System.Globalization;
 
 
-    public class IntegerToken : AToken
+    public class IntegerNumberToken : AToken
     {
-        public IntegerToken(int v, int linePosition, int line)
+        public IntegerNumberToken(int v, int linePosition, int line)
             : base(linePosition, line)
         {
             TokenCode = TokenCode.TOK_INTEGER_NUMBER;

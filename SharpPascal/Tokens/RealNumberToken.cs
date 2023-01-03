@@ -5,9 +5,9 @@ namespace SharpPascal.Tokens
     using System.Globalization;
 
 
-    public class RealToken : AToken
+    public class RealNumberToken : AToken
     {
-        public RealToken(double v, int linePosition, int line)
+        public RealNumberToken(double v, int linePosition, int line)
             : base(linePosition, line)
         {
             TokenCode = TokenCode.TOK_REAL_NUMBER;
