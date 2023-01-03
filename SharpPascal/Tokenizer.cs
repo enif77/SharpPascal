@@ -390,7 +390,7 @@ namespace SharpPascal
 
                     if (CurrentChar != '\'')
                     {
-                        return new StringToken(strValueSb.ToString(), currentLinePosition, currentLine);
+                        return new StringLiteralToken(strValueSb.ToString(), currentLinePosition, currentLine);
                     }
                 }
 
@@ -487,8 +487,8 @@ namespace SharpPascal
             }
 
             return isReal
-                ? new RealToken(rValue * sign, linePosition, line)
-                : new IntegerToken(iValue * sign, linePosition, line);
+                ? new RealNumberToken(rValue * sign, linePosition, line)
+                : new IntegerNumberToken(iValue * sign, linePosition, line);
         }
 
         /// <summary>

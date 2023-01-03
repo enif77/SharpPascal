@@ -2,13 +2,16 @@
 
 namespace SharpPascal.Tokens
 {
-    public class StringToken : AToken
+    using System;
+    
+    
+    public class StringLiteralToken : AToken
     {
-        public StringToken(string s, int linePosition, int line)
+        public StringLiteralToken(string s, int linePosition, int line)
             : base(linePosition, line)
         {
             TokenCode = TokenCode.TOK_STR;
-            StringValue = s ?? string.Empty;
+            StringValue = s ?? throw new ArgumentException("A string literal expected.");
         }
 
 
