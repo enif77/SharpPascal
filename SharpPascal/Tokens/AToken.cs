@@ -35,39 +35,30 @@ namespace SharpPascal.Tokens
         {
             switch (TokenCode)
             {
-                case TokenCode.TOK_SEP: return ";";
-                case TokenCode.TOK_LBRA: return "(";
-                case TokenCode.TOK_RBRA: return ")";
-                case TokenCode.TOK_LIST_SEP: return ",";
-                case TokenCode.TOK_DDOT: return ":";
-
                 case TokenCode.TOK_ADD_OP: return "+";
-                case TokenCode.TOK_ASGN_OP: return ":=";
+                case TokenCode.TOK_SUB_OP: return "-";
+                case TokenCode.TOK_MUL_OP: return "*";
                 case TokenCode.TOK_DIV_OP: return "/";
                 case TokenCode.TOK_EQ_OP: return "=";
-                case TokenCode.TOK_GE_OP: return ">=";
-                case TokenCode.TOK_GT_OP: return ">";
-                case TokenCode.TOK_LE_OP: return "<=";
                 case TokenCode.TOK_LT_OP: return "<";
-                case TokenCode.TOK_MUL_OP: return "*";
+                case TokenCode.TOK_GT_OP: return ">";
+                // [
+                // ]
+                // .
+                case TokenCode.TOK_LIST_SEP: return ",";
+                case TokenCode.TOK_DDOT: return ":";
+                case TokenCode.TOK_SEP: return ";";
+                // ^
+                case TokenCode.TOK_LBRA: return "(";
+                case TokenCode.TOK_RBRA: return ")";
                 case TokenCode.TOK_NEQ_OP: return "<>";
-                case TokenCode.TOK_SUB_OP: return "-";
+                case TokenCode.TOK_LE_OP: return "<=";
+                case TokenCode.TOK_GE_OP: return ">=";
+                case TokenCode.TOK_ASGN_OP: return ":=";
+                // ..
             }
 
             throw new CompilerException("Unknown token " + TokenCode + ".");
         }
     }
 }
-
-/*
- 
-special-symbol =
-    + ~ * / = < > [ ] . , : ; " ( ) <> <= >= := ..
- 
-word-symbol =
-    and array begin case const div do downto else end file for
-    function goto if in label mod
-    nil not of or packed procedure program record repeat set then
-    to type until var while with 
-   
- */

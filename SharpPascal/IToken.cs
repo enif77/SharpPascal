@@ -15,36 +15,6 @@ namespace SharpPascal
         TOK_EOLN,
 
         /// <summary>
-        /// The program end mark '.'.
-        /// </summary>
-        TOK_PROG_END,
-
-        /// <summary>
-        /// The statement separator ';'.
-        /// </summary>
-        TOK_SEP,
-
-        /// <summary>
-        /// The list separator ','.
-        /// </summary>
-        TOK_LIST_SEP,
-
-        /// <summary>
-        /// The ':'.
-        /// </summary>
-        TOK_DDOT,
-
-        /// <summary>
-        /// '('.
-        /// </summary>
-        TOK_LBRA,
-        
-        /// <summary>
-        /// ')'.
-        /// </summary>
-        TOK_RBRA,
-
-        /// <summary>
         /// A string literal.
         /// </summary>
         TOK_STR,
@@ -64,30 +34,67 @@ namespace SharpPascal
         /// </summary>
         TOK_REAL_NUMBER,
 
-        // Operators.
-        TOK_ADD_OP,  // '+'
-        TOK_AND_OP,  // AND
-        TOK_ASGN_OP, // ':='
-        TOK_DIV_OP,  // '/'
-        TOK_EQ_OP,   // '='
-        TOK_DIVI_OP, // DIV
-        TOK_GE_OP,   // '>='
-        TOK_GT_OP,   // '>'
-        TOK_IN_OP,   // IN
-        TOK_LE_OP,   // '<='
-        TOK_LT_OP,   // '<'
-        TOK_MUL_OP,  // '*'
-        TOK_MOD_OP,  // MOD
-        TOK_OR_OP,   // OR
-        TOK_NEQ_OP,  // '<>'
-        TOK_SUB_OP,  // '-'
-
-        // Keywords.
+        // Special symbols:
+        
+        TOK_ADD_OP,   // '+'
+        TOK_SUB_OP,   // '-'
+        TOK_MUL_OP,   // '*'
+        TOK_DIV_OP,   // '/'
+        TOK_EQ_OP,    // '='
+        TOK_LT_OP,    // '<'
+        TOK_GT_OP,    // '>'
+        // '['
+        // ']'
+        TOK_PROG_END, // '.'
+        TOK_LIST_SEP, // ','
+        TOK_DDOT,     // ':'
+        TOK_SEP,      // ';'
+        // '^'
+        TOK_LBRA,     // '('
+        TOK_RBRA,     // ')'
+        TOK_NEQ_OP,   // '<>'
+        TOK_LE_OP,    // '<='
+        TOK_GE_OP,    // '>='
+        TOK_ASGN_OP,  // ':='
+        
+        // Word symbols:
+        
+        TOK_AND_OP,   // AND
+        // ARRAY
         TOK_KEY_BEGIN,
-        TOK_KEY_END,
+        // CASE
+        // CONST
+        TOK_DIVI_OP,  // DIV
+        // DO
+        // DOWNTO
+        // ELSE
+        TOK_KEY_END,  // END
+        // FILE
+        // FOR
+        // FUNCTION
+        // GOTO
+        // IF
+        TOK_IN_OP,    // IN
+        // LABEL
+        TOK_MOD_OP,   // MOD
+        // NIL
+        // NOT
+        // OF
+        TOK_OR_OP,    // OR
+        // PACKED
+        // PROCEDURE
         TOK_KEY_PROGRAM,
+        // RECORD
+        // REPEAT
+        // SET
+        // THEN
+        // TO
+        // TYPE
+        // UNTIL
         TOK_KEY_VAR,
-    };
+        // WHILE
+        // WITH
+    }
 
 
     public interface IToken
