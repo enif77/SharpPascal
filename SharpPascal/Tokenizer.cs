@@ -15,15 +15,9 @@ namespace SharpPascal
     public class Tokenizer
     {
         /// <summary>
-        /// The end of the source character.
-        /// </summary>
-        public const int C_EOF = -1;
-
-
-        /// <summary>
         /// The currently parsed source.
         /// </summary>
-        public ISourceReader Source { get; }
+        private ISourceReader Source { get; }
 
         /// <summary>
         /// The last character extracted from the program source.
@@ -65,7 +59,7 @@ namespace SharpPascal
         /// </summary>
         public IToken NextToken()
         {
-            while (CurrentChar != C_EOF)
+            while (IsEoF(CurrentChar) == false)
             {
                 // Skip white chars.
                 while (IsWhite(CurrentChar))
@@ -216,11 +210,19 @@ namespace SharpPascal
                     case ']': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_BRACKET, "]");
                     case '^': return CurrentToken = ParseSimpleToken(TokenCode.TOK_POINTER, "^");
                     case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END, ".");
-
-                    case C_EOF: return CurrentToken = ParseEof();
-
+                    
                     default:
-                        throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
+                    {
+                        if (IsEoF(CurrentChar))
+                        {
+                            return CurrentToken = ParseEof();
+                        }
+
+                        throw new CompilerException(
+                            CurrentLine, 
+                            CurrentLinePosition, 
+                            $"Unknown character '{CurrentChar}' found.");
+                    }
                 }
             }
 
@@ -277,7 +279,7 @@ namespace SharpPascal
             NextChar();
 
             var inComment = true;
-            while (CurrentChar != C_EOF)
+            while (IsEoF(CurrentChar) == false)
             {
                 // The '}' end of a comment?
                 if (CurrentChar == '}')
@@ -398,7 +400,7 @@ namespace SharpPascal
             var strValueSb = new StringBuilder();
 
             NextChar();
-            while (CurrentChar != C_EOF)
+            while (IsEoF(CurrentChar) == false)
             {
                 if (CurrentChar == '\'')
                 {
@@ -528,6 +530,13 @@ namespace SharpPascal
         }
 
         /// <summary>
+        /// Checks, if a character is the end-of-file mark.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private static bool IsEoF(int c) => c < 0;
+
+        /// <summary>
         /// Checks, if an character is a digit.
         /// digit :: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' .
         /// </summary>
@@ -535,7 +544,7 @@ namespace SharpPascal
         /// <returns>True, if a character is a digit.</returns>
         private static bool IsDigit(int c)
         {
-            return c >= '0' && c <= '9';
+            return c is >= '0' and <= '9';
         }
 
         /// <summary>
@@ -546,7 +555,7 @@ namespace SharpPascal
         /// <returns>True, if a character is a white character.</returns>
         private static bool IsWhite(int c)
         {
-            return c == ' ' || c == '\t' || c == '\r' || c == '\n';
+            return c is ' ' or '\t' or '\r' or '\n';
         }
 
         /// <summary>
@@ -556,7 +565,7 @@ namespace SharpPascal
         /// <returns>True, if a character is a letter.</returns>
         private static bool IsLetter(int c)
         {
-            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+            return c is >= 'a' and <= 'z' or >= 'A' and <= 'Z';
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SharpPascal.Tests
         {
             var t = new Tokenizer(new StringSourceReader(string.Empty));
             
-            Assert.Equal(Tokenizer.C_EOF, t.CurrentChar);
+            Assert.True(t.CurrentChar < 0);
         }
 
         [Fact]
