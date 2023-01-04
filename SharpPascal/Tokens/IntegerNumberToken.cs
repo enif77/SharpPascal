@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public IntegerNumberToken(int v, int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_INTEGER_NUMBER;
+            Code = TokenCode.TOK_INTEGER_NUMBER;
             IntegerValue = v;
         }
 

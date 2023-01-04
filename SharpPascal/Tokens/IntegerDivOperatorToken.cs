@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public IntegerDivOperatorToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_DIVI_OP;
+            Code = TokenCode.TOK_KEY_DIV;
         }
 
 

@@ -25,7 +25,7 @@ namespace SharpPascal.Tests.Tokens
             Assert.Throws<ArgumentException>(() => new IdentifierToken(null, 1, 1));
         }
         
-        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_IDENT;
+        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_IDENTIFIER;
         protected override string ExpectedTokenStringRepresentation => "bla";
 
         protected override IToken CreateToken(int linePosition = 1, int line = 1) =>

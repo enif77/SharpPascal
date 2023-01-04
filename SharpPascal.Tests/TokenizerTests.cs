@@ -20,7 +20,7 @@ namespace SharpPascal.Tests
         {
             var t = new Tokenizer(new StringSourceReader(string.Empty));
             
-            Assert.Equal(TokenCode.TOK_EOF, t.CurrentToken.TokenCode);
+            Assert.Equal(TokenCode.TOK_EOF, t.CurrentToken.Code);
         }
 
         // [Fact]
@@ -37,7 +37,7 @@ namespace SharpPascal.Tests
         {
             var t = new Tokenizer(new StringSourceReader(source));
 
-            Assert.Equal(TokenCode.TOK_EOF, t.NextToken().TokenCode);
+            Assert.Equal(TokenCode.TOK_EOF, t.NextToken().Code);
         }
 
         [Theory]
@@ -49,7 +49,7 @@ namespace SharpPascal.Tests
             var t = new Tokenizer(new StringSourceReader(source));
             var tok = t.NextToken();
 
-            Assert.Equal(TokenCode.TOK_INTEGER_NUMBER, tok.TokenCode);
+            Assert.Equal(TokenCode.TOK_INTEGER_NUMBER, tok.Code);
             Assert.Equal(expectedValue, tok.IntegerValue);
         }
 
@@ -64,7 +64,7 @@ namespace SharpPascal.Tests
             var t = new Tokenizer(new StringSourceReader(source));
             var tok = t.NextToken();
 
-            Assert.Equal(TokenCode.TOK_REAL_NUMBER, tok.TokenCode);
+            Assert.Equal(TokenCode.TOK_REAL_NUMBER, tok.Code);
             Assert.Equal(expectedValue, tok.RealValue);
         }
     }

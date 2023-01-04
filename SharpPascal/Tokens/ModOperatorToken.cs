@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public ModOperatorToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_MOD_OP;
+            Code = TokenCode.TOK_KEY_MOD;
         }
 
 

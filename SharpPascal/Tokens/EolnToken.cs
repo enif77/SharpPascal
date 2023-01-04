@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public EolnToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_EOLN;
+            Code = TokenCode.TOK_EOLN;
         }
 
 

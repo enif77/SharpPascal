@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public InOperatorToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_IN_OP;
+            Code = TokenCode.TOK_KEY_IN;
         }
 
 

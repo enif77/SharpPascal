@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public BeginBlockToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_KEY_BEGIN;
+            Code = TokenCode.TOK_KEY_BEGIN;
         }
 
 

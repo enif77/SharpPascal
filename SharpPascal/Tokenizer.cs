@@ -214,10 +214,10 @@ namespace SharpPascal
                             continue;
                         }
 
-                        return CurrentToken = new SimpleToken(TokenCode.TOK_LBRA, currentLinePosition, currentLine);
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_LEFT_PAREN, currentLinePosition, currentLine);
                     }
                     
-                    case ')': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RBRA);
+                    case ')': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_PAREN);
                     case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END);
 
                     case C_EOF: return CurrentToken = new EofToken(CurrentLinePosition, CurrentLine);
@@ -236,13 +236,13 @@ namespace SharpPascal
         /// </summary>
         private readonly Dictionary<string, TokenCode> _keyWordsMap = new()
         {
-            { "AND", TokenCode.TOK_AND_OP },
+            { "AND", TokenCode.TOK_KEY_AND },
             { "BEGIN", TokenCode.TOK_KEY_BEGIN },
-            { "DIV", TokenCode.TOK_DIVI_OP },
+            { "DIV", TokenCode.TOK_KEY_DIV },
             { "END", TokenCode.TOK_KEY_END },
-            { "IN", TokenCode.TOK_IN_OP },
-            { "MOD", TokenCode.TOK_MOD_OP },
-            { "OR", TokenCode.TOK_OR_OP },
+            { "IN", TokenCode.TOK_KEY_IN },
+            { "MOD", TokenCode.TOK_KEY_MOD },
+            { "OR", TokenCode.TOK_KEY_OR },
             { "PROGRAM", TokenCode.TOK_KEY_PROGRAM },
             { "VAR", TokenCode.TOK_KEY_VAR },
         };
@@ -354,13 +354,13 @@ namespace SharpPascal
             {
                 switch (_keyWordsMap[strValue])
                 {
-                    case TokenCode.TOK_AND_OP: return new AndOperatorToken(currentLinePosition, currentLine);
+                    case TokenCode.TOK_KEY_AND: return new AndOperatorToken(currentLinePosition, currentLine);
                     case TokenCode.TOK_KEY_BEGIN: return new BeginBlockToken(currentLinePosition, currentLine);
-                    case TokenCode.TOK_DIVI_OP: return new IntegerDivOperatorToken(currentLinePosition, currentLine);
+                    case TokenCode.TOK_KEY_DIV: return new IntegerDivOperatorToken(currentLinePosition, currentLine);
                     case TokenCode.TOK_KEY_END: return new EndBlockToken(currentLinePosition, currentLine);
-                    case TokenCode.TOK_IN_OP: return new InOperatorToken(currentLinePosition, currentLine);
-                    case TokenCode.TOK_MOD_OP: return new ModOperatorToken(currentLinePosition, currentLine);
-                    case TokenCode.TOK_OR_OP: return new OrOperatorToken(currentLinePosition, currentLine);
+                    case TokenCode.TOK_KEY_IN: return new InOperatorToken(currentLinePosition, currentLine);
+                    case TokenCode.TOK_KEY_MOD: return new ModOperatorToken(currentLinePosition, currentLine);
+                    case TokenCode.TOK_KEY_OR: return new OrOperatorToken(currentLinePosition, currentLine);
                     case TokenCode.TOK_KEY_PROGRAM: return new BeginProgramToken(currentLinePosition, currentLine);
                     case TokenCode.TOK_KEY_VAR: return new BeginVariablesDeclarationToken(currentLinePosition, currentLine);
                     

@@ -7,9 +7,7 @@ namespace SharpPascal.Tokens
     
     public abstract class AToken : IToken
     {
-        public TokenCode TokenCode { get; protected init; }
-
-        public bool BooleanValue { get; protected init; }
+        public TokenCode Code { get; protected init; }
         public int IntegerValue { get; protected init; }
         public double RealValue { get; protected init; }
         public string StringValue { get; protected init; }
@@ -33,7 +31,7 @@ namespace SharpPascal.Tokens
 
         public override string ToString()
         {
-            switch (TokenCode)
+            switch (Code)
             {
                 case TokenCode.TOK_ADD_OP: return "+";
                 case TokenCode.TOK_SUB_OP: return "-";
@@ -49,8 +47,8 @@ namespace SharpPascal.Tokens
                 case TokenCode.TOK_DDOT: return ":";
                 case TokenCode.TOK_SEP: return ";";
                 // ^
-                case TokenCode.TOK_LBRA: return "(";
-                case TokenCode.TOK_RBRA: return ")";
+                case TokenCode.TOK_LEFT_PAREN: return "(";
+                case TokenCode.TOK_RIGHT_PAREN: return ")";
                 case TokenCode.TOK_NEQ_OP: return "<>";
                 case TokenCode.TOK_LE_OP: return "<=";
                 case TokenCode.TOK_GE_OP: return ">=";
@@ -58,7 +56,7 @@ namespace SharpPascal.Tokens
                 // ..
             }
 
-            throw new CompilerException("Unknown token " + TokenCode + ".");
+            throw new CompilerException("Unknown token " + Code + ".");
         }
     }
 }

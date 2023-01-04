@@ -7,7 +7,7 @@ namespace SharpPascal.Tests.Tokens
     
     public class IntegerDivOperatorTokenTests : ATokenTestsBase
     {
-        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_DIVI_OP;
+        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_KEY_DIV;
         protected override string ExpectedTokenStringRepresentation => "DIV";
 
         protected override IToken CreateToken(int linePosition = 1, int line = 1) =>

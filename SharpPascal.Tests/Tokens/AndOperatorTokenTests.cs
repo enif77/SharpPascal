@@ -7,7 +7,7 @@ namespace SharpPascal.Tests.Tokens
     
     public class AndOperatorTokenTests : ATokenTestsBase
     {
-        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_AND_OP;
+        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_KEY_AND;
         protected override string ExpectedTokenStringRepresentation => "AND";
 
         protected override IToken CreateToken(int linePosition = 1, int line = 1) =>

@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public StringLiteralToken(string s, int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_STR;
+            Code = TokenCode.TOK_STRING_LITERAL;
             StringValue = s ?? throw new ArgumentException("A string literal expected.");
         }
 

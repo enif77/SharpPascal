@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public EndBlockToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_KEY_END;
+            Code = TokenCode.TOK_KEY_END;
         }
 
 

@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public EndProgramToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_PROG_END;
+            Code = TokenCode.TOK_PROG_END;
         }
 
 

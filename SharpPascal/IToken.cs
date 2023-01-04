@@ -17,12 +17,12 @@ namespace SharpPascal
         /// <summary>
         /// A string literal.
         /// </summary>
-        TOK_STR,
+        TOK_STRING_LITERAL,
 
         /// <summary>
         /// An identifier.
         /// </summary>
-        TOK_IDENT,
+        TOK_IDENTIFIER,
 
         /// <summary>
         /// An integer number or a label.
@@ -43,15 +43,15 @@ namespace SharpPascal
         TOK_EQ_OP,    // '='
         TOK_LT_OP,    // '<'
         TOK_GT_OP,    // '>'
-        // '['
-        // ']'
+        TOK_LEFT_BRACKET, // '['
+        TOK_RIGHT_BRACKET, // ']'
         TOK_PROG_END, // '.'
         TOK_LIST_SEP, // ','
         TOK_DDOT,     // ':'
         TOK_SEP,      // ';'
-        // '^'
-        TOK_LBRA,     // '('
-        TOK_RBRA,     // ')'
+        TOK_POINTER,  // '^'
+        TOK_LEFT_PAREN,  // '('
+        TOK_RIGHT_PAREN, // ')'
         TOK_NEQ_OP,   // '<>'
         TOK_LE_OP,    // '<='
         TOK_GE_OP,    // '>='
@@ -59,48 +59,47 @@ namespace SharpPascal
         
         // Word symbols:
         
-        TOK_AND_OP,   // AND
-        // ARRAY
+        TOK_KEY_AND,
+        TOK_KEY_ARRAY,
         TOK_KEY_BEGIN,
-        // CASE
-        // CONST
-        TOK_DIVI_OP,  // DIV
-        // DO
-        // DOWNTO
-        // ELSE
-        TOK_KEY_END,  // END
-        // FILE
-        // FOR
-        // FUNCTION
-        // GOTO
-        // IF
-        TOK_IN_OP,    // IN
-        // LABEL
-        TOK_MOD_OP,   // MOD
-        // NIL
-        // NOT
-        // OF
-        TOK_OR_OP,    // OR
-        // PACKED
-        // PROCEDURE
+        TOK_KEY_CASE,
+        TOK_KEY_CONST,
+        TOK_KEY_DIV,
+        TOK_KEY_DO,
+        TOK_KEY_DOWNTO,
+        TOK_KEY_ELSE,
+        TOK_KEY_END,
+        TOK_KEY_FILE,
+        TOK_KEY_FOR,
+        TOK_KEY_FUNCTION,
+        TOK_KEY_GOTO,
+        TOK_KEY_IF,
+        TOK_KEY_IN,
+        TOK_KEY_LABEL,
+        TOK_KEY_MOD,
+        TOK_KEY_NIL,
+        TOK_KEY_NOT,
+        TOK_KEY_OF,
+        TOK_KEY_OR,
+        TOK_KEY_PACKED,
+        TOK_KEY_PROCEDURE,
         TOK_KEY_PROGRAM,
-        // RECORD
-        // REPEAT
-        // SET
-        // THEN
-        // TO
-        // TYPE
-        // UNTIL
+        TOK_KEY_RECORD,
+        TOK_KEY_REPEAT,
+        TOK_KEY_SET,
+        TOK_KEY_THEN,
+        TOK_KEY_TO,
+        TOK_KEY_TYPE,
+        TOK_KEY_UNTIL,
         TOK_KEY_VAR,
-        // WHILE
-        // WITH
+        TOK_KEY_WHILE,
+        TOK_KEY_WITH
     }
 
 
     public interface IToken
     {
-        TokenCode TokenCode { get; }
-        bool BooleanValue { get; }
+        TokenCode Code { get; }
         int IntegerValue { get; }
         double RealValue { get; }
         string StringValue { get; }

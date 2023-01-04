@@ -63,13 +63,13 @@ namespace SharpPascal
             ExpectAndEat(TokenCode.TOK_KEY_PROGRAM, "The 'PROGRAM' key word expected.");
 
             // An identifier.
-            Expect(TokenCode.TOK_IDENT, "A program name expected.");
+            Expect(TokenCode.TOK_IDENTIFIER, "A program name expected.");
 
             var program = new CompiledProgramParts.Program(Tokenizer.CurrentToken.StringValue);
 
             // program-parameter-list?
             var t = Tokenizer.NextToken();
-            if (t.TokenCode == TokenCode.TOK_LBRA)
+            if (t.Code == TokenCode.TOK_LEFT_PAREN)
             {
                 // Eat '('.
                 Tokenizer.NextToken();
@@ -77,7 +77,7 @@ namespace SharpPascal
                 ParseProgramParameterList(program);
 
                 // ')'.
-                ExpectAndEat(TokenCode.TOK_RBRA, "The end of program parameter list ')' expected.");
+                ExpectAndEat(TokenCode.TOK_RIGHT_PAREN, "The end of program parameter list ')' expected.");
             }
 
             return program;
@@ -89,18 +89,18 @@ namespace SharpPascal
         /// </summary>
         private void ParseProgramParameterList(CompiledProgramParts.Program program)
         {
-            Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
+            Expect(TokenCode.TOK_IDENTIFIER, "An external file descriptor identifier expected.");
 
             var t = Tokenizer.CurrentToken;
-            while (t.TokenCode != TokenCode.TOK_EOF)
+            while (t.Code != TokenCode.TOK_EOF)
             {
-                Expect(TokenCode.TOK_IDENT, "An external file descriptor identifier expected.");
+                Expect(TokenCode.TOK_IDENTIFIER, "An external file descriptor identifier expected.");
 
                 program.AddExternalFileDescriptor(t.StringValue);
 
                 // Eat identifier.
                 t = Tokenizer.NextToken();
-                if (t.TokenCode == TokenCode.TOK_LIST_SEP)
+                if (t.Code == TokenCode.TOK_LIST_SEP)
                 {
                     // Eat ','.
                     t = Tokenizer.NextToken();
@@ -151,7 +151,7 @@ namespace SharpPascal
         /// <param name="programBlock">A program block containing this variables declaration list.</param>
         private void ParseVariableDeclarationPart(IProgramBlock programBlock)
         {
-            if (Tokenizer.CurrentToken.TokenCode != TokenCode.TOK_KEY_VAR)
+            if (Tokenizer.CurrentToken.Code != TokenCode.TOK_KEY_VAR)
             {
                 return;
             }
@@ -167,7 +167,7 @@ namespace SharpPascal
                 var t = Tokenizer.CurrentToken;
 
                 // ';' ?
-                if (t.TokenCode != TokenCode.TOK_SEP)
+                if (t.Code != TokenCode.TOK_SEP)
                 {
                     throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "The end of variable declaration list (';') expected.");
                 }
@@ -175,7 +175,7 @@ namespace SharpPascal
                 // Eat ';'.
                 t = Tokenizer.NextToken();
 
-                if (t.TokenCode != TokenCode.TOK_IDENT)
+                if (t.Code != TokenCode.TOK_IDENTIFIER)
                 {
                     break;
                 }
@@ -192,13 +192,13 @@ namespace SharpPascal
         private void ParseVariableDeclaration(IProgramBlock programBlock)
         {
             var t = Tokenizer.CurrentToken;
-            if (t.TokenCode != TokenCode.TOK_IDENT)
+            if (t.Code != TokenCode.TOK_IDENTIFIER)
             {
                 throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "An identifier in the variable declaration list expected.");
             }
 
             var variablesList = new List<string>();
-            while (t.TokenCode == TokenCode.TOK_IDENT)
+            while (t.Code == TokenCode.TOK_IDENTIFIER)
             {
                 variablesList.Add(t.StringValue);
 
@@ -206,12 +206,12 @@ namespace SharpPascal
                 t = Tokenizer.NextToken();
 
                 // ','.
-                if (t.TokenCode == TokenCode.TOK_LIST_SEP)
+                if (t.Code == TokenCode.TOK_LIST_SEP)
                 {
                     // Eat the ','.
                     t = Tokenizer.NextToken();
 
-                    if (t.TokenCode == TokenCode.TOK_IDENT)
+                    if (t.Code == TokenCode.TOK_IDENTIFIER)
                     {
                         continue;
                     }
@@ -224,7 +224,7 @@ namespace SharpPascal
             }
 
             // ':'?
-            if (t.TokenCode != TokenCode.TOK_DDOT)
+            if (t.Code != TokenCode.TOK_DDOT)
             {
                 throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "A variable type specification part expected.");
             }
@@ -233,7 +233,7 @@ namespace SharpPascal
             t = Tokenizer.NextToken();
 
             // A type identifier.
-            if (t.TokenCode != TokenCode.TOK_IDENT)
+            if (t.Code != TokenCode.TOK_IDENTIFIER)
             {
                 throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "A type denoter in variable declaration expected.");
             }
@@ -282,17 +282,17 @@ namespace SharpPascal
         private void ParseStatementSequence(IProgramBlock currentBlock)
         {
             var t = Tokenizer.CurrentToken;
-            while (t.TokenCode != TokenCode.TOK_EOF)
+            while (t.Code != TokenCode.TOK_EOF)
             {
                 currentBlock.AddCompiledProgramPart(ParseStatement(currentBlock));
 
                 t = Tokenizer.CurrentToken;
-                if (t.TokenCode == TokenCode.TOK_KEY_END)
+                if (t.Code == TokenCode.TOK_KEY_END)
                 {
                     break;
                 }
 
-                if (t.TokenCode == TokenCode.TOK_SEP)
+                if (t.Code == TokenCode.TOK_SEP)
                 {
                     t = Tokenizer.NextToken();
 
@@ -317,12 +317,12 @@ namespace SharpPascal
         private ICompiledProgramPart ParseStatement(IProgramBlock parentBlock)
         {
             var t = Tokenizer.CurrentToken;
-            if (t.TokenCode == TokenCode.TOK_IDENT)
+            if (t.Code == TokenCode.TOK_IDENTIFIER)
             {
                 // TODO: Procedure or assignment or function?
                 return ParseProcedureStatement(parentBlock);
             }
-            else if (t.TokenCode == TokenCode.TOK_SEP || t.TokenCode == TokenCode.TOK_KEY_END)
+            else if (t.Code == TokenCode.TOK_SEP || t.Code == TokenCode.TOK_KEY_END)
             {
                 return new EmptyCommand(parentBlock);
             }
@@ -342,7 +342,7 @@ namespace SharpPascal
             {
                 // Eat "writeln".
                 var t = Tokenizer.NextToken();
-                if (t.TokenCode == TokenCode.TOK_LBRA)
+                if (t.Code == TokenCode.TOK_LEFT_PAREN)
                 {
                     return ParseWritelnParameterList(parentBlock);
                 }
@@ -366,12 +366,12 @@ namespace SharpPascal
         {
             // Eat "(";
             var t = Tokenizer.NextToken();
-            if (t.TokenCode == TokenCode.TOK_STR)
+            if (t.Code == TokenCode.TOK_STRING_LITERAL)
             {
                 var expression = (Expression)ParseExpression(parentBlock);
 
                 // ')'.
-                ExpectAndEat(TokenCode.TOK_RBRA, "The end of procedure parameters ')' expected.");
+                ExpectAndEat(TokenCode.TOK_RIGHT_PAREN, "The end of procedure parameters ')' expected.");
 
                 return new WritelnCommand(parentBlock, expression.SValue);
             }
@@ -386,7 +386,7 @@ namespace SharpPascal
         /// <returns></returns>
         private ICompiledProgramPart ParseExpression(IProgramBlock parentBlock)
         {
-            if (Tokenizer.CurrentToken.TokenCode == TokenCode.TOK_STR)
+            if (Tokenizer.CurrentToken.Code == TokenCode.TOK_STRING_LITERAL)
             {
                 var s = Tokenizer.CurrentToken.StringValue;
 
@@ -407,7 +407,7 @@ namespace SharpPascal
         /// <param name="errorMessage">An error mesage thrown as an exception, if the expected token was not found.</param>
         private void Expect(TokenCode tokenCode, string errorMessage)
         {
-            if (Tokenizer.CurrentToken.TokenCode != tokenCode)
+            if (Tokenizer.CurrentToken.Code != tokenCode)
             {
                 throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, errorMessage);
             }

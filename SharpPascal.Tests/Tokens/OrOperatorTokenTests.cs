@@ -7,7 +7,7 @@ namespace SharpPascal.Tests.Tokens
     
     public class OrOperatorTokenTests : ATokenTestsBase
     {
-        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_OR_OP;
+        protected override TokenCode ExpectedTokenCode => TokenCode.TOK_KEY_OR;
         protected override string ExpectedTokenStringRepresentation => "OR";
 
         protected override IToken CreateToken(int linePosition = 1, int line = 1) =>

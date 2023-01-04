@@ -14,7 +14,7 @@ namespace SharpPascal.Tests.Tokens
         {
             var token = CreateToken();
             
-            Assert.Equal(ExpectedTokenCode, token.TokenCode);
+            Assert.Equal(ExpectedTokenCode, token.Code);
         }
         
         [Theory]

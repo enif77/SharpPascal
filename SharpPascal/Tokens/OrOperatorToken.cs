@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public OrOperatorToken(int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_OR_OP;
+            Code = TokenCode.TOK_KEY_OR;
         }
 
 

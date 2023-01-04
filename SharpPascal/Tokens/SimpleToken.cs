@@ -7,7 +7,7 @@ namespace SharpPascal.Tokens
         public SimpleToken(TokenCode tokenCode, int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = tokenCode;
+            Code = tokenCode;
         }
     }
 }

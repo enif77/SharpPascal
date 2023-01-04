@@ -15,7 +15,7 @@ namespace SharpPascal.Tokens
                 throw new ArgumentException("An identifier name expected.");
             }
 
-            TokenCode = TokenCode.TOK_IDENT;
+            Code = TokenCode.TOK_IDENTIFIER;
             StringValue = s;
         }
 

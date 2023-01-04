@@ -10,7 +10,7 @@ namespace SharpPascal.Tokens
         public RealNumberToken(double v, int linePosition, int line)
             : base(linePosition, line)
         {
-            TokenCode = TokenCode.TOK_REAL_NUMBER;
+            Code = TokenCode.TOK_REAL_NUMBER;
             RealValue = v;
         }
 
