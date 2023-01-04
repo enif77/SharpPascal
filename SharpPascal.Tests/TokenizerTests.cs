@@ -163,6 +163,8 @@ namespace SharpPascal.Tests
         [InlineData("+123.45", 123.45)]
         [InlineData("12e3", 12000)]
         [InlineData("12.3e3", 12300)]
+        [InlineData("5e-3", 0.005)]
+        [InlineData("5e+8", 500000000)]
         public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_real_literal(string source, double expectedValue)
         {
             var t = new Tokenizer(new StringSourceReader(source));

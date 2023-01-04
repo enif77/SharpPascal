@@ -485,6 +485,18 @@ namespace SharpPascal
                 // Eat 'e'.
                 NextChar();
 
+                // Support for the scale factor sign.
+                var factSign = 1.0;
+                if (CurrentChar == '-')
+                {
+                    NextChar();
+                    factSign = -1.0;
+                }
+                else if (CurrentChar == '+')
+                {
+                    NextChar();
+                }
+
                 if (IsDigit(CurrentChar) == false)
                 {
                     throw new CompilerException(CurrentLine, CurrentLinePosition, "A scale factor of a real number expected.");
@@ -498,7 +510,7 @@ namespace SharpPascal
                     NextChar();
                 }
 
-                rValue *= Math.Pow(10, fact);
+                rValue *= Math.Pow(10, fact * factSign);
 
                 isReal = true;
             }
