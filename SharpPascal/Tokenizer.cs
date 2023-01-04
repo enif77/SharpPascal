@@ -218,6 +218,9 @@ namespace SharpPascal
                     }
                     
                     case ')': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_PAREN);
+                    case '[': return CurrentToken = ParseSimpleToken(TokenCode.TOK_LEFT_BRACKET);
+                    case ']': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_BRACKET);
+                    case '^': return CurrentToken = ParseSimpleToken(TokenCode.TOK_POINTER);
                     case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END);
 
                     case C_EOF: return CurrentToken = new EofToken(CurrentLinePosition, CurrentLine);
@@ -322,6 +325,8 @@ namespace SharpPascal
 
             switch (tokenCode)
             {
+                case TokenCode.TOK_LEFT_BRACKET: return new LeftBracketToken(currentLinePosition, currentLine);
+                case TokenCode.TOK_RIGHT_BRACKET: return new RightBracketToken(currentLinePosition, currentLine);
                 case TokenCode.TOK_PROG_END: return new EndProgramToken(currentLinePosition, currentLine);
                 
                 default:
