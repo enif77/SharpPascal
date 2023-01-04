@@ -19,11 +19,6 @@ namespace SharpPascal
         /// </summary>
         public const int C_EOF = -1;
 
-        /// <summary>
-        /// The end of the line character.
-        /// </summary>
-        private const char C_EOLN = '\n';
-               
 
         /// <summary>
         /// The currently parsed source.
@@ -61,7 +56,7 @@ namespace SharpPascal
             CurrentLine = 1;
             
             // This reads the first char from the source also.
-            CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF"); // TODO: @EOF to constant.
+            CurrentToken = ParseEof();
         }
 
 
@@ -222,17 +217,17 @@ namespace SharpPascal
                     case '^': return CurrentToken = ParseSimpleToken(TokenCode.TOK_POINTER, "^");
                     case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END, ".");
 
-                    case C_EOF: return CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF");
+                    case C_EOF: return CurrentToken = ParseEof();
 
                     default:
                         throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
                 }
             }
 
-            return CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF");
+            return CurrentToken = ParseEof();
         }
         
-
+        
         /// <summary>
         /// The keyword - token map.
         /// </summary>
@@ -353,7 +348,16 @@ namespace SharpPascal
         }
         
         /// <summary>
-        /// Parses an identifier using the ECMA-55 rules.
+        /// Creates the EOF representing token from the current source position. 
+        /// </summary>
+        private IToken ParseEof()
+        {
+            return ParseSimpleToken(TokenCode.TOK_EOF, "@EOF");
+        }
+        
+        /// <summary>
+        /// Parses an identifier or an keyword.
+        /// identifier :: letter { letter | digit } .
         /// </summary>
         private IToken ParseIdent()
         {
@@ -380,7 +384,11 @@ namespace SharpPascal
         }
 
         /// <summary>
-        /// Parses the quoted string using the ECMA-55 rules.
+        /// Parses a string.
+        /// string :: string-terminator [ string-character | string-terminator-escape ] string-terminator .
+        /// string-terminator :: '''
+        /// string-terminator-escape :: "''" .
+        /// string-character :: any char except string-terminator .
         /// </summary>
         private IToken ParseString()
         {
@@ -421,7 +429,6 @@ namespace SharpPascal
         /// <param name="sign">A number sign. 1 is a positive number, -1 is a negative number.</param>
         /// <param name="linePosition">A line position of the first char of the returned token.</param>
         /// <param name="line">At which line is the first char of the returned token.</param>
-        /// <returns>A token representing a number or an operator.</returns>
         private IToken ParseNumber(int sign, int linePosition, int line)
         {
             var isReal = false;
@@ -513,7 +520,7 @@ namespace SharpPascal
             }
 
             CurrentLinePosition++;
-            if (lastChar == C_EOLN)
+            if (lastChar == '\n')
             {
                 CurrentLine++;
                 CurrentLinePosition = 1;

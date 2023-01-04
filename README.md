@@ -11,6 +11,7 @@ program :: program-heading ';' program-block '.' .
 program-heading :: "program" identifier [ '(' program-parameter-list ')' ] .
 program-parameter-list :: identifier-list .
 identifier-list :: identifier { ',' identifier } .
+identifier :: letter { letter | digit } .
 program-block :: block .
 block :: variable-declaration-part statement-part .
 variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
@@ -57,7 +58,7 @@ procedure-identifier :: "writeln" .
 list-of-parameters-writeln :: [ '(' parameter-write { ',' parameter-write } ')' ] .
 parameter-write :: string .
 string :: string-terminator [ string-character | string-terminator-escape ] string-terminator .
-string-terminator :: ''';
+string-terminator :: ''' .
 string-terminator-escape :: "''" .
 string-character :: any char except string-terminator .
 comment :: comment-start { any char except comment-start or comment-end } comment-end .
