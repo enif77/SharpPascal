@@ -59,10 +59,9 @@ namespace SharpPascal
             Source = source ?? throw new ArgumentNullException(nameof(source));
             CurrentLinePosition = 1;
             CurrentLine = 1;
-            CurrentToken = new SimpleToken(TokenCode.TOK_EOF, "@EOF", CurrentLinePosition, CurrentLine);
             
-            // Read the first char from the source.
-            Source.NextChar();
+            // This reads the first char from the source also.
+            CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF"); // TODO: @EOF to constant.
         }
 
 
@@ -223,14 +222,14 @@ namespace SharpPascal
                     case '^': return CurrentToken = ParseSimpleToken(TokenCode.TOK_POINTER, "^");
                     case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END, ".");
 
-                    case C_EOF: return CurrentToken = new SimpleToken(TokenCode.TOK_EOF, "@EOF", CurrentLinePosition, CurrentLine);
+                    case C_EOF: return CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF");
 
                     default:
                         throw new CompilerException(CurrentLine, CurrentLinePosition, $"Unknown character '{CurrentChar}' found.");
                 }
             }
 
-            return CurrentToken = new SimpleToken(TokenCode.TOK_EOF, "@EOF", CurrentLinePosition, CurrentLine);
+            return CurrentToken = ParseSimpleToken(TokenCode.TOK_EOF, "@EOF");
         }
         
 
