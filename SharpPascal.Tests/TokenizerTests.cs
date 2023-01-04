@@ -23,14 +23,6 @@ namespace SharpPascal.Tests
             Assert.Equal(TokenCode.TOK_EOF, t.CurrentToken.Code);
         }
 
-        // [Fact]
-        // public void SourcePosition_is_0_when_Tokenizer_is_just_created()
-        // {
-        //     var t = new Tokenizer(new StringSourceReader(string.Empty));
-        //     
-        //     Assert.Equal(0, t.SourcePosition);
-        // }
-        
         [Theory]
         [InlineData("")]
         public void NextToken_Returns_TOK_EOF_when_source_is_empty(string source)
@@ -40,34 +32,6 @@ namespace SharpPascal.Tests
             Assert.Equal(TokenCode.TOK_EOF, t.NextToken().Code);
         }
 
-        [Theory]
-        [InlineData("0", 0)]
-        [InlineData("-1", -1)]
-        [InlineData("+123", 123)]
-        public void NextToken_Returns_TOK_IDENTIFIER_NUMBER_and_value_when_source_is_integer_literal(string source, int expectedValue)
-        {
-            var t = new Tokenizer(new StringSourceReader(source));
-            var tok = t.NextToken();
-
-            Assert.Equal(TokenCode.TOK_INTEGER_NUMBER, tok.Code);
-            Assert.Equal(expectedValue, tok.IntegerValue);
-        }
-
-        [Theory]
-        [InlineData("0.0", 0.0)]
-        [InlineData("-1.5", -1.5)]
-        [InlineData("+123.45", 123.45)]
-        [InlineData("12e3", 12000)]
-        [InlineData("12.3e3", 12300)]
-        public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_real_literal(string source, double expectedValue)
-        {
-            var t = new Tokenizer(new StringSourceReader(source));
-            var tok = t.NextToken();
-
-            Assert.Equal(TokenCode.TOK_REAL_NUMBER, tok.Code);
-            Assert.Equal(expectedValue, tok.RealValue);
-        }
-        
         [Theory]
         [InlineData("", TokenCode.TOK_EOF)]
         [InlineData("abcd", TokenCode.TOK_IDENTIFIER)]
@@ -139,6 +103,89 @@ namespace SharpPascal.Tests
             var tok = t.NextToken();
 
             Assert.Equal(expectedTokenCode, tok.Code);
+        }
+        
+        [Theory]
+        [InlineData("X", "X")]
+        [InlineData("time", "TIME")]
+        [InlineData("readinteger", "READINTEGER")]
+        [InlineData("WG4", "WG4")]
+        [InlineData("AlterHeatSetting", "ALTERHEATSETTING")]
+        [InlineData("InquireWorkstationTransformation", "INQUIREWORKSTATIONTRANSFORMATION")]
+        [InlineData("InquireWorkstationIdentification", "INQUIREWORKSTATIONIDENTIFICATION")]
+        public void NextToken_Returns_TOK_IDENTIFIER_and_value_when_source_is_identifier(string source, string expectedValue)
+        {
+            var t = new Tokenizer(new StringSourceReader(source));
+            var tok = t.NextToken();
+
+            Assert.Equal(TokenCode.TOK_IDENTIFIER, tok.Code);
+            Assert.Equal(expectedValue, tok.StringValue);
+        }
+        
+        [Theory]
+        [InlineData("'abcd'", "abcd")]
+        [InlineData("'ab''cd'", "ab'cd")]
+        [InlineData("'''abcd'", "'abcd")]
+        [InlineData("'abcd'''", "abcd'")]
+        public void NextToken_Returns_TOK_STRING_LITERAL_and_value_when_source_is_string_literal(string source, string expectedValue)
+        {
+            var t = new Tokenizer(new StringSourceReader(source));
+            var tok = t.NextToken();
+
+            Assert.Equal(TokenCode.TOK_STRING_LITERAL, tok.Code);
+            Assert.Equal(expectedValue, tok.StringValue);
+        }
+        
+        [Fact]
+        public void String_literal_must_be_terminated()
+        {
+            var t = new Tokenizer(new StringSourceReader("'abcd"));
+            
+            Assert.Throws<CompilerException>(() => t.NextToken());
+        }
+
+        [Theory]
+        [InlineData("0", 0)]
+        [InlineData("-1", -1)]
+        [InlineData("+123", 123)]
+        public void NextToken_Returns_TOK_INTEGER_NUMBER_and_value_when_source_is_integer_literal(string source, int expectedValue)
+        {
+            var t = new Tokenizer(new StringSourceReader(source));
+            var tok = t.NextToken();
+
+            Assert.Equal(TokenCode.TOK_INTEGER_NUMBER, tok.Code);
+            Assert.Equal(expectedValue, tok.IntegerValue);
+        }
+
+        [Theory]
+        [InlineData("0.0", 0.0)]
+        [InlineData("-1.5", -1.5)]
+        [InlineData("+123.45", 123.45)]
+        [InlineData("12e3", 12000)]
+        [InlineData("12.3e3", 12300)]
+        public void NextToken_Returns_TOK_REAL_NUMBER_and_value_when_source_is_real_literal(string source, double expectedValue)
+        {
+            var t = new Tokenizer(new StringSourceReader(source));
+            var tok = t.NextToken();
+
+            Assert.Equal(TokenCode.TOK_REAL_NUMBER, tok.Code);
+            Assert.Equal(expectedValue, tok.RealValue);
+        }
+        
+        [Fact]
+        public void Fractional_part_of_real_number_is_required()
+        {
+            var t = new Tokenizer(new StringSourceReader("3."));
+            
+            Assert.Throws<CompilerException>(() => t.NextToken());
+        }
+        
+        [Fact]
+        public void Scale_factor_of_real_number_is_required()
+        {
+            var t = new Tokenizer(new StringSourceReader("3e"));
+            
+            Assert.Throws<CompilerException>(() => t.NextToken());
         }
     }
 }
