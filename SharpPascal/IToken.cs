@@ -10,11 +10,6 @@ namespace SharpPascal
         TOK_EOF,
 
         /// <summary>
-        /// The end of the line token.
-        /// </summary>
-        TOK_EOLN,
-
-        /// <summary>
         /// A string literal.
         /// </summary>
         TOK_STRING_LITERAL,
