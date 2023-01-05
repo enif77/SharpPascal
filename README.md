@@ -142,7 +142,7 @@ comment :: ( '{' | '(*' ) commentary ( '*)' | '}' ) .
 
 ### 6.1.9 Lexical alternatives
 
-Some tokens iven in 6.1.1 to 6.1.8 have defined alternatives:
+Some tokens given in 6.1.1 to 6.1.8 have defined alternatives:
 
 ```
 Reference token  Alternative token
@@ -151,6 +151,39 @@ Reference token  Alternative token
   ]                .)
   {                (*
   }                *)
+```
+
+## Parser and compiler
+
+### Program
+
+The top level structure of a program:
+
+```pascal
+program Hello;
+begin 
+end.
+```
+
+is compiled to:
+
+```csharp
+namespace EMPTYPROG
+{
+    using System;
+    
+    static class Program
+    {
+        static void Main()
+        {
+        }
+        
+        private static void _WriteLn(string text = "")
+        {
+            Console.WriteLine(text);
+        }
+    }
+}
 ```
 
 

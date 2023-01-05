@@ -28,7 +28,7 @@ namespace SharpPascal.CompiledProgramParts
 
             sb.AppendLine();
 
-            sb.AppendLine("static void Main(string[] args)");
+            sb.AppendLine("static void Main()");
             sb.AppendLine("{");
 
             foreach (var child in Children)
@@ -54,7 +54,7 @@ namespace SharpPascal.CompiledProgramParts
  
 static int a;
 
-static void Main(string[] args)
+static void Main()
 {
     // Code...
 }

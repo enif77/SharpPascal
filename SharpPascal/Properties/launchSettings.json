@@ -2,7 +2,8 @@
   "profiles": {
     "SharpPascal": {
       "commandName": "Project",
-      "commandLineArgs": "../../../Resources/VariablesProg.pas"
+      "commandLineArgs": "../../../Resources/EmptyProg.pas",
+      "commandLineArgsVariables": "../../../Resources/VariablesProg.pas"
     }
   }
 }

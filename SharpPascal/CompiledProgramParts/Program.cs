@@ -21,13 +21,13 @@ namespace SharpPascal.CompiledProgramParts
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A program name expected.");
 
             Name = name;
-            _externalFileDescriptors = new Dictionary<string, string>();
+            ExternalFileDescriptors = new Dictionary<string, string>();
         }
 
 
         public bool HasExternalFileDescriptor(string name)
         {
-            return string.IsNullOrEmpty(name) == false && _externalFileDescriptors.ContainsKey(name);
+            return string.IsNullOrEmpty(name) == false && ExternalFileDescriptors.ContainsKey(name);
         }
 
 
@@ -35,12 +35,12 @@ namespace SharpPascal.CompiledProgramParts
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
 
-            if (_externalFileDescriptors.ContainsKey(name))
+            if (ExternalFileDescriptors.ContainsKey(name))
             {
                 throw new CompilerException($"The '{name}' external file descriptor is not defined.");
             }
 
-            return _externalFileDescriptors[name];
+            return ExternalFileDescriptors[name];
         }
 
 
@@ -48,44 +48,43 @@ namespace SharpPascal.CompiledProgramParts
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
 
-            if (_externalFileDescriptors.ContainsKey(name))
+            if (ExternalFileDescriptors.ContainsKey(name))
             {
                 throw new CompilerException($"The '{name}' external file descriptor is already defined.");
             }
 
-            _externalFileDescriptors.Add(name, name);
+            ExternalFileDescriptors.Add(name, name);
         }
 
 
         public string GenerateOutput()
         {
-            var sb = new StringBuilder();
+            var sb = new StringBuilder(ProgramSourceTemplate);
 
-            sb.Append("namespace ");
-            sb.AppendLine(Name);
-            sb.AppendLine("{");
-            sb.AppendLine("static class Program");
-            sb.AppendLine("{");
-            sb.AppendLine((Block == null) ? string.Empty : Block.GenerateOutput());
-
-            // TODO: Program methods.
-
-            sb.Append(_stdOutputSourceTemplate);
-            sb.AppendLine("}");
-            sb.AppendLine("}");
+            sb.Replace("${PROGRAM-NAME}", Name);
+            sb.Replace("${PROGRAM-BODY}", (Block == null)
+                ? string.Empty
+                : Block.GenerateOutput());
 
             return sb.ToString();
         }
 
 
-        private Dictionary<string, string> _externalFileDescriptors { get; }
+        private Dictionary<string, string> ExternalFileDescriptors { get; }
+        
+        private const string ProgramSourceTemplate = @"namespace ${PROGRAM-NAME}
+{
+    using System;
+   
+    static class Program
+    {
+${PROGRAM-BODY}  
 
-
-        private static readonly string _stdOutputSourceTemplate = @"private static void _WriteLn(string text = """")
+        private static void _WriteLn(string text = """")
         {
             Console.WriteLine(text);
         }
-";
-
+    }     
+}";
     }
 }
