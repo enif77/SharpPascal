@@ -6,6 +6,8 @@ namespace SharpPascal.Tests
 
     using Xunit;
 
+    using SharpPascal.SourceReaders;
+    
 
     public sealed class StringSourceReaderTests
     {

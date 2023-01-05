@@ -1,6 +1,6 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal.CompiledProgramParts
+namespace SharpPascal.Parser.CompiledProgramParts
 {
     public class Expression : ICompiledProgramPart
     {

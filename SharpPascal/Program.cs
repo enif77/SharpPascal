@@ -5,6 +5,8 @@ namespace SharpPascal
     using System;
     using System.IO;
 
+    using SharpPascal.SourceReaders;
+    
 
     static class Program
     {
@@ -71,7 +73,7 @@ namespace SharpPascal
         {
             Console.WriteLine("Compiling: {0}", path);
             
-            var parser = new Parser(
+            var parser = new Parser.Parser(
                 new Tokenizer(
                     new StringSourceReader(
                         File.ReadAllText(path)

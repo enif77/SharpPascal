@@ -12,7 +12,7 @@ namespace SharpPascal
     /// <summary>
     /// Makes tokens from a program source.
     /// </summary>
-    public class Tokenizer
+    public class Tokenizer : ITokenizer
     {
         /// <summary>
         /// The currently parsed source.

@@ -1,10 +1,10 @@
 /* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal
+namespace SharpPascal.SourceReaders
 {
     using System;
-
-
+    
+    
     public class StringSourceReader : ISourceReader
     {
         public int CurrentChar { get; private set; }

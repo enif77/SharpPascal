@@ -1,24 +1,21 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal
+namespace SharpPascal.Parser
 {
     using System;
     using System.Collections.Generic;
-
-    using SharpPascal.CompiledProgramParts;
-    using SharpPascal.Tokens;
-
-
-    public class Parser
+    
+    using SharpPascal.Parser.CompiledProgramParts;
+    
+    
+    public class Parser : IParser
     {
-        public Tokenizer Tokenizer { get; }
+        public ITokenizer Tokenizer { get; }
 
 
-        public Parser(Tokenizer tokenizer)
+        public Parser(ITokenizer tokenizer)
         {
-            if (tokenizer == null) throw new ArgumentNullException(nameof(tokenizer));
-
-            Tokenizer = tokenizer;
+            Tokenizer = tokenizer ?? throw new ArgumentNullException(nameof(tokenizer));
         }
 
 
