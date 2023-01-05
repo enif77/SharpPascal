@@ -201,6 +201,13 @@ namespace SharpPascal
 
                             continue;
                         }
+                        
+                        if (CurrentChar == '.')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_LEFT_BRACKET, "[", currentLinePosition, currentLine);    
+                        }
 
                         return CurrentToken = new SimpleToken(TokenCode.TOK_LEFT_PAREN, "(", currentLinePosition, currentLine);
                     }
@@ -208,8 +215,26 @@ namespace SharpPascal
                     case ')': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_PAREN, ")");
                     case '[': return CurrentToken = ParseSimpleToken(TokenCode.TOK_LEFT_BRACKET, "[");
                     case ']': return CurrentToken = ParseSimpleToken(TokenCode.TOK_RIGHT_BRACKET, "]");
+                    
+                    case '@':
                     case '^': return CurrentToken = ParseSimpleToken(TokenCode.TOK_POINTER, "^");
-                    case '.': return CurrentToken = ParseSimpleToken(TokenCode.TOK_PROG_END, ".");
+
+                    case '.':
+                    {
+                        var currentLinePosition = CurrentLinePosition;
+                        var currentLine = CurrentLine;
+                        
+                        NextChar();
+                        
+                        if (CurrentChar == ')')
+                        {
+                            NextChar();
+
+                            return CurrentToken = new SimpleToken(TokenCode.TOK_RIGHT_BRACKET, "]", currentLinePosition, currentLine);
+                        }
+
+                        return CurrentToken = new SimpleToken(TokenCode.TOK_PROG_END, ".", currentLinePosition, currentLine);
+                    }
                     
                     default:
                     {

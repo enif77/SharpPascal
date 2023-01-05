@@ -58,8 +58,11 @@ namespace SharpPascal.Tests
         [InlineData("(", TokenCode.TOK_LEFT_PAREN)]
         [InlineData(")", TokenCode.TOK_RIGHT_PAREN)]
         [InlineData("[", TokenCode.TOK_LEFT_BRACKET)]
+        [InlineData("(.", TokenCode.TOK_LEFT_BRACKET)]
         [InlineData("]", TokenCode.TOK_RIGHT_BRACKET)]
+        [InlineData(".)", TokenCode.TOK_RIGHT_BRACKET)]
         [InlineData("^", TokenCode.TOK_POINTER)]
+        [InlineData("@", TokenCode.TOK_POINTER)]
         [InlineData(".", TokenCode.TOK_PROG_END)]
         
         [InlineData("and", TokenCode.TOK_KEY_AND)]
