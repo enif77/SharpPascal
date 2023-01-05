@@ -8,5 +8,21 @@
 
   <ItemGroup>
     <Compile Remove="Resources/*.*" />
+    <Compile Remove="Resources/obj/**" />
+    <Compile Remove="Resources/bin/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Resources.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Resources/obj/**" />
+    <EmbeddedResource Remove="Resources/bin/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources/obj/**" />
+    <None Remove="Resources/bin/**" />
   </ItemGroup>
 </Project>

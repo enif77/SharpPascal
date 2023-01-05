@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>ptocs</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="*.pas.cs" />
+    <Compile Include="EmptyProg.pas.cs" />
+  </ItemGroup>
+</Project>
