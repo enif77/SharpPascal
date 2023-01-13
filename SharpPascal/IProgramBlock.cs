@@ -15,6 +15,13 @@ namespace SharpPascal
         IEnumerable<ICompiledProgramPart> Children { get; }
 
         /// <summary>
+        /// Checks, if a constant is defined in this program block.
+        /// </summary>
+        /// <param name="name">A constant name.</param>
+        /// <returns>True, if a constant is declared in this program block.</returns>
+        bool IsConstantDefined(string name);
+        
+        /// <summary>
         /// Checks, if a variable is declared in this program block.
         /// </summary>
         /// <param name="name">A variable name.</param>

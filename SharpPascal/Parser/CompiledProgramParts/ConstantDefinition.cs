@@ -8,12 +8,12 @@ namespace SharpPascal.Parser.CompiledProgramParts
     public class ConstantDefinition
     {
         public string Name { get; private init; }
-        public string TypeName { get; private init; }
-        public string OutputTypeName { get; private init; }
-        public int IntegerValue { get; protected init; }
-        public double RealValue { get; protected init; }
-        public string StringValue { get; protected init; }
+        public TypeDefinition TypeDefinition { get; init; }
+        public int IntegerValue { get; init; }
+        public double RealValue { get; init; }
+        public string StringValue { get; init; }
 
+        
         private ConstantDefinition()
         { 
         }
@@ -26,8 +26,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new ConstantDefinition()
             {
                 Name = name,
-                TypeName = "integer",
-                OutputTypeName = "int",
+                TypeDefinition = TypeDefinition.CreateIntegerTypeDefinition(),
                 IntegerValue = value
             };
         }
@@ -40,8 +39,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new ConstantDefinition()
             {
                 Name = name,
-                TypeName = "real",
-                OutputTypeName = "double",
+                TypeDefinition = TypeDefinition.CreateRealTypeDefinition(),
                 RealValue = value
             };
         }
@@ -54,8 +52,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new ConstantDefinition()
             {
                 Name = name,
-                TypeName = "string",
-                OutputTypeName = "string",
+                TypeDefinition = TypeDefinition.CreateStringTypeDefinition(),
                 StringValue = value
             };
         }

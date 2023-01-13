@@ -20,7 +20,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             foreach (var variableDeclaration in VariableDeclarations.Values)
             {
                 sb.Append("static ");
-                sb.Append(variableDeclaration.OutputTypeName);
+                sb.Append(variableDeclaration.TypeDefinition.OutputType.Name);
                 sb.Append(' ');
                 sb.Append(variableDeclaration.Name);
                 sb.AppendLine(";");

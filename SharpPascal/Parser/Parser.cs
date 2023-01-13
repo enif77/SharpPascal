@@ -119,8 +119,7 @@ namespace SharpPascal.Parser
         }
 
         /// <summary>
-        /// block :: variable-declaration-part statement-part .
-        /// variable-declaration-part :: [ "var" variable-declaration ';' { variable-declaration ';' } ] .
+        /// block :: constant-definition-part variable-declaration-part statement-part .
         /// statement-part :: compound-statement .
         /// compound-statement :: "begin" statement-sequence "end" .
         /// statement-sequence :: statement { ';' statement } .
@@ -133,10 +132,69 @@ namespace SharpPascal.Parser
                 ? new ProgramBlock()
                 : (IProgramBlock)new Block(parentBlock);
 
+            ParseConstantDefinitionPart(block);
             ParseVariableDeclarationPart(block);
             ParseStatementPart(block);
 
             return block;
+        }
+
+        /// <summary>
+        /// constant-definition-part :: [ "const" constant-definition ';' { constant-definition ';' } ] .
+        /// </summary>
+        /// <param name="programBlock">A parent program block.</param>
+        private void ParseConstantDefinitionPart(IProgramBlock programBlock)
+        {
+            if (Tokenizer.CurrentToken.Code != TokenCode.TOK_KEY_CONST)
+            {
+                return;
+            }
+
+            // Eat "const".
+            Tokenizer.NextToken();
+            
+            while (true)
+            {
+                ParseConstantDefinition(programBlock);
+
+                // Get the token behind the last constant-definition.
+                var t = Tokenizer.CurrentToken;
+
+                // ';' ?
+                if (t.Code != TokenCode.TOK_SEP)
+                {
+                    throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "The end of constant definition list (';') expected.");
+                }
+
+                // Eat ';'.
+                t = Tokenizer.NextToken();
+
+                if (t.Code != TokenCode.TOK_IDENTIFIER)
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// constant-definition :: identifier '=' constant .
+        /// constant :: [ sign ] ( unsigned-number | constant-identifier ) | character-string .
+        /// constant-identifier :: identifier .
+        /// </summary>
+        /// <param name="programBlock">A parent program block.</param>
+        private void ParseConstantDefinition(IProgramBlock programBlock)
+        {
+            var t = Tokenizer.CurrentToken;
+            if (t.Code != TokenCode.TOK_IDENTIFIER)
+            {
+                throw new CompilerException(Tokenizer.CurrentLine, Tokenizer.CurrentLinePosition, "An identifier in the constant definition list expected.");
+            }
+
+            var constantIdentifier = t.StringValue;
+            
+            ExpectAndEat(TokenCode.TOK_EQ_OP, $"The '=' operator in the '{constantIdentifier}' constant definition expected.");
+            
+            
         }
 
         /// <summary>

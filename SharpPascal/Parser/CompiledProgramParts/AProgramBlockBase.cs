@@ -21,6 +21,9 @@ namespace SharpPascal.Parser.CompiledProgramParts
         }
 
 
+        public bool IsConstantDefined(string name) => false;
+        
+
         public void AddVariableDeclaration(string name, string typeName)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("A variable name expected.");
@@ -28,7 +31,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
 
             if (VariableDeclarations.ContainsKey(name))
             {
-                throw new CompilerException($"The '{name}' variable is already declared as the {VariableDeclarations[name].TypeName} type.");
+                throw new CompilerException($"The '{name}' variable is already declared as the {VariableDeclarations[name].TypeDefinition.Name} type.");
             }
 
             switch (typeName)
@@ -37,7 +40,8 @@ namespace SharpPascal.Parser.CompiledProgramParts
                 case "REAL": VariableDeclarations.Add(name, VariableDeclaration.CreateRealVariableDeclaration(name)); break;
                 case "CHAR": VariableDeclarations.Add(name, VariableDeclaration.CreateCharVariableDeclaration(name)); break;
                 case "STRING": VariableDeclarations.Add(name, VariableDeclaration.CreateStringVariableDeclaration(name)); break;
-
+                case "BOOLEAN": VariableDeclarations.Add(name, VariableDeclaration.CreateBooleanVariableDeclaration(name)); break;
+                
                 default:
                     throw new CompilerException($"Unknown type '{typeName}' used for the '{name}' variable declaration.");
             }

@@ -8,8 +8,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
     public class VariableDeclaration
     {
         public string Name { get; private init; }
-        public string TypeName { get; private init; }
-        public string OutputTypeName { get; private init; }
+        public TypeDefinition TypeDefinition { get; init; }
 
 
         private VariableDeclaration()
@@ -24,8 +23,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new VariableDeclaration()
             {
                 Name = name,
-                TypeName = "integer",
-                OutputTypeName = "int"
+                TypeDefinition = TypeDefinition.CreateIntegerTypeDefinition()
             };
         }
 
@@ -37,8 +35,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new VariableDeclaration()
             {
                 Name = name,
-                TypeName = "real",
-                OutputTypeName = "double"
+                TypeDefinition = TypeDefinition.CreateRealTypeDefinition()
             };
         }
 
@@ -50,8 +47,7 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new VariableDeclaration()
             {
                 Name = name,
-                TypeName = "char",
-                OutputTypeName = "char"
+                TypeDefinition = TypeDefinition.CreateCharTypeDefinition()
             };
         }
 
@@ -63,8 +59,18 @@ namespace SharpPascal.Parser.CompiledProgramParts
             return new VariableDeclaration()
             {
                 Name = name,
-                TypeName = "string",
-                OutputTypeName = "string"
+                TypeDefinition = TypeDefinition.CreateStringTypeDefinition()
+            };
+        }
+        
+        public static VariableDeclaration CreateBooleanVariableDeclaration(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("A variable name expected.");
+
+            return new VariableDeclaration()
+            {
+                Name = name,
+                TypeDefinition = TypeDefinition.CreateBooleanTypeDefinition()
             };
         }
     }
