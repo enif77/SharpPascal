@@ -7,9 +7,9 @@ namespace SharpPascal.Parser.CompiledProgramParts
 
     public class VariableDeclaration
     {
-        public string Name { get; private set; }
-        public string TypeName { get; private set; }
-        public string OutputTypeName { get; private set; }
+        public string Name { get; private init; }
+        public string TypeName { get; private init; }
+        public string OutputTypeName { get; private init; }
 
 
         private VariableDeclaration()
@@ -52,19 +52,6 @@ namespace SharpPascal.Parser.CompiledProgramParts
                 Name = name,
                 TypeName = "char",
                 OutputTypeName = "char"
-            };
-        }
-
-
-        public static VariableDeclaration CreateBooleanVariableDeclaration(string name)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("A variable name expected.");
-
-            return new VariableDeclaration()
-            {
-                Name = name,
-                TypeName = "boolean",
-                OutputTypeName = "bool"
             };
         }
 

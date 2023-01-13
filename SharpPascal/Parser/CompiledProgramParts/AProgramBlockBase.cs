@@ -36,7 +36,6 @@ namespace SharpPascal.Parser.CompiledProgramParts
                 case "INTEGER": VariableDeclarations.Add(name, VariableDeclaration.CreateIntegerVariableDeclaration(name)); break;
                 case "REAL": VariableDeclarations.Add(name, VariableDeclaration.CreateRealVariableDeclaration(name)); break;
                 case "CHAR": VariableDeclarations.Add(name, VariableDeclaration.CreateCharVariableDeclaration(name)); break;
-                case "BOOLEAN": VariableDeclarations.Add(name, VariableDeclaration.CreateBooleanVariableDeclaration(name)); break;
                 case "STRING": VariableDeclarations.Add(name, VariableDeclaration.CreateStringVariableDeclaration(name)); break;
 
                 default:
