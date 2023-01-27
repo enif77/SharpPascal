@@ -5,7 +5,7 @@ namespace SharpPascal.Parser
     using System;
     using System.Collections.Generic;
     
-    using SharpPascal.Parser.CompiledProgramParts;
+    using SharpPascal.CompiledProgramParts;
     
     
     public class Parser : IParser

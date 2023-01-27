@@ -1,14 +1,14 @@
 ﻿/* Copyright (C) Premysl Fara and Contributors */
 
-namespace SharpPascal.Parser.CompiledProgramParts
+namespace SharpPascal.CompiledProgramParts
 {
     using System.Text;
 
 
-    public class ProgramBlock : AProgramBlockBase
+    public class Block : AProgramBlockBase
     {
-        public ProgramBlock()
-            : base(null)
+        public Block(IProgramBlock parentBlock)
+            : base(parentBlock)
         {
         }
 
@@ -17,19 +17,14 @@ namespace SharpPascal.Parser.CompiledProgramParts
         {
             var sb = new StringBuilder();
 
+            sb.Append("{");
+
             foreach (var variableDeclaration in VariableDeclarations.Values)
             {
-                sb.Append("static ");
-                sb.Append(variableDeclaration.TypeDefinition.OutputType.Name);
-                sb.Append(' ');
-                sb.Append(variableDeclaration.Name);
-                sb.AppendLine(";");
+                sb.Append(variableDeclaration.GenerateOutput());
             }
 
             sb.AppendLine();
-
-            sb.AppendLine("static void Main()");
-            sb.AppendLine("{");
 
             foreach (var child in Children)
             {
@@ -52,10 +47,9 @@ namespace SharpPascal.Parser.CompiledProgramParts
 
 /*
  
-static int a;
-
-static void Main()
 {
+    int a, b, c;
+
     // Code...
 }
  
