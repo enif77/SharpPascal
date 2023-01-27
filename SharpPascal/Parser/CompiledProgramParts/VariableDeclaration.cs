@@ -3,9 +3,10 @@
 namespace SharpPascal.Parser.CompiledProgramParts
 {
     using System;
+    using System.Text;
 
 
-    public class VariableDeclaration
+    public class VariableDeclaration : ICompiledProgramPart
     {
         public string Name { get; private init; }
         public TypeDefinition TypeDefinition { get; init; }
@@ -13,6 +14,19 @@ namespace SharpPascal.Parser.CompiledProgramParts
 
         private VariableDeclaration()
         { 
+        }
+
+
+        public string GenerateOutput()
+        {
+            var sb = new StringBuilder();
+
+                sb.Append(TypeDefinition.OutputType.Name);
+                sb.Append(" ");
+                sb.Append(Name);
+                sb.AppendLine(";");
+
+            return sb.ToString();
         }
 
 
