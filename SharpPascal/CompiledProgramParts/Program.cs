@@ -3,65 +3,35 @@
 namespace SharpPascal.CompiledProgramParts
 {
     using System;
-    using System.Collections.Generic;
     using System.Text;
 
 
+    /// <summary>
+    /// program :: program-heading ';' program-block '.' .
+    /// </summary>
     public class Program : ICompiledProgramPart
     {
-        public string Name { get; }
+        public string Name => ProgramHeading.ProgramIdentifier;
+        public ProgramHeading ProgramHeading { get; }
         public ICompiledProgramPart Block { get; set; }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="name">A program name.</param>
-        public Program(string name)
+        /// <param name="programHeading">A parsed program heading.</param>
+        public Program(ProgramHeading programHeading)
         {
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("A program name expected.");
-
-            Name = name;
-            ExternalFileDescriptors = new Dictionary<string, string>();
-        }
-
-
-        public bool HasExternalFileDescriptor(string name)
-        {
-            return string.IsNullOrEmpty(name) == false && ExternalFileDescriptors.ContainsKey(name);
-        }
-
-
-        public string GetExternalFileDescriptor(string name)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
-
-            if (ExternalFileDescriptors.ContainsKey(name))
-            {
-                throw new CompilerException($"The '{name}' external file descriptor is not defined.");
-            }
-
-            return ExternalFileDescriptors[name];
-        }
-
-
-        public void AddExternalFileDescriptor(string name)
-        {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("An external file descriptor name expected.");
-
-            if (ExternalFileDescriptors.ContainsKey(name))
-            {
-                throw new CompilerException($"The '{name}' external file descriptor is already defined.");
-            }
-
-            ExternalFileDescriptors.Add(name, name);
+            ProgramHeading = programHeading ?? throw new ArgumentNullException(nameof(programHeading));
         }
 
 
         public string GenerateOutput()
         {
-            var sb = new StringBuilder(ProgramSourceTemplate);
+            var sb = new StringBuilder();
 
-            sb.Replace("${PROGRAM-NAME}", Name);
+            sb.AppendLine(ProgramHeading.GenerateOutput());
+            sb.AppendLine();
+            sb.AppendLine(ProgramSourceTemplate);
             sb.Replace("${PROGRAM-BODY}", (Block == null)
                 ? string.Empty
                 : Block.GenerateOutput());
@@ -70,21 +40,22 @@ namespace SharpPascal.CompiledProgramParts
         }
 
 
-        private Dictionary<string, string> ExternalFileDescriptors { get; }
-        
-        private const string ProgramSourceTemplate = @"namespace ${PROGRAM-NAME}
-{
-    using System;
+        private const string ProgramSourceTemplate = """
+using System;
    
-    static class Program
-    {
+static class Program
+{
 ${PROGRAM-BODY}  
 
-        private static void _WriteLn(string text = """")
-        {
-            Console.WriteLine(text);
-        }
-    }     
-}";
+    #region runtime-lib
+
+    private static void _WriteLn(string text = "")
+    {
+        Console.WriteLine(text);
+    }
+
+    #endregion
+}
+""";
     }
 }
