@@ -11,7 +11,6 @@ namespace SharpPascal.CompiledProgramParts
     /// </summary>
     public class Program : ICompiledProgramPart
     {
-        public string Name => ProgramHeading.ProgramIdentifier;
         public ProgramHeading ProgramHeading { get; }
         public ICompiledProgramPart Block { get; set; }
 
